@@ -1,0 +1,6 @@
+[submodule "emacs.d/google-weather-el"]
+	path = emacs.d/google-weather-el
+	url = git://git.naquadah.org/google-weather-el.git
+[submodule "emacs.d/smart-tab"]
+	path = emacs.d/smart-tab
+	url = git://github.com/genehack/smart-tab.git

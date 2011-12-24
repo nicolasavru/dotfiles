@@ -1,0 +1,8 @@
+emacs.d/conf/private.el
+emacs.d/url/*
+emacs.d/custom-lisp/*
+emacs.d/auto-save-list/*
+emacs.d/cache/*
+emacs.d/tramp
+emacs.d/emms/*
+
