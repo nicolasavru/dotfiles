@@ -292,10 +292,9 @@ When called repeatedly, cycle through the buffers."
 (erc-services-mode 1)
 (setq erc-prompt-for-nickserv-password nil)
 
-(setq erc-max-buffer-size 30000)
+(setq erc-max-buffer-size 20000)
 (setq erc-truncate-buffer-on-save t)
 (add-hook 'erc-insert-post-hook 'erc-truncate-buffer t)
-(setq erc-truncate-buffer-on-save t)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
