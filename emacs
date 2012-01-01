@@ -740,3 +740,8 @@ line instead."
   '(diminish 'undo-tree-mode))
 (eval-after-load "whitespace"
   '(diminish 'global-whitespace-mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Tramp
+
+(setq tramp-default-method "ssh")
