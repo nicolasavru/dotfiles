@@ -1,0 +1,5 @@
+Dotfiles of Nicolas Avrutin (nicolasavru@gmail.com)
+
+Upon cloning, run:
+git submodule init
+git submodule update
