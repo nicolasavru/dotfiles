@@ -6,6 +6,14 @@
       (normal-top-level-add-subdirs-to-load-path)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;·keysyms
+
+(define-key input-decode-map "\e\eOA" [(meta up)])
+(define-key input-decode-map "\e\eOB" [(meta down)])
+(define-key input-decode-map "\e\eOC" [(meta right)])
+(define-key input-decode-map "\e\eOD" [(meta left)])
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; custom lisp
 ;; emacs or package lisp files which I have modified
 ;; (possibly awaiting patch acceptance)
@@ -745,3 +753,6 @@ line instead."
 ;; Tramp
 
 (setq tramp-default-method "ssh")
+(setq tramp-shell-prompt-pattern
+      (concat (if (featurep 'xemacs) "" "\\(?:^\\|\r\\)")
+              "[^#$%>\n]*#?[#$%>] *\\(\e\\[[0-9;]*[a-zA-Z] *\\)*"))
