@@ -246,12 +246,10 @@
   (if (= 2 (length (window-list)))
       (let ((thisBuf (window-buffer))
             (nextBuf (progn (other-window 1) (buffer-name)))
-            (split-type (if (= (+ (window-width) 4)  ; window-width and frame-width differ by 2 (4?) for horizontal windows, related to --without-toolkit-scroll-bars ?
-                               (frame-width))
+            (split-type (if (window-full-width-p)
                             'split-window-horizontally
                           'split-window-vertically)))
         (progn
-          (message "%d %d "(window-width) (frame-width))
           (delete-other-windows)
           (funcall split-type)
           (set-window-buffer nil thisBuf)
@@ -303,7 +301,7 @@
               (split-type-1 nil)
               (split-type-2 nil)
               )
-          (if (= (+ (window-width) 4) (frame-width)) ; window-width and frame-width differ by 2 (4?) for horizontal windows, related to --without-toolkit-scroll-bars ?
+          (if (window-full-width-p)
               (setq split-type-1 'split-window-horizontally split-type-2 'split-window-vertically)
             (setq split-type-1 'split-window-vertically  split-type-2 'split-window-horizontally))
           (funcall split-3 1stBuf 2ndBuf 3rdBuf split-type-1 split-type-2)
