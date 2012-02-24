@@ -4,3 +4,6 @@
 [submodule "emacs.d/smart-tab"]
 	path = emacs.d/smart-tab
 	url = git://github.com/genehack/smart-tab.git
+[submodule "emacs.d/fixed-point-completion"]
+	path = emacs.d/fixed-point-completion
+	url = git://github.com/smithzvk/fixed-point-completion.git

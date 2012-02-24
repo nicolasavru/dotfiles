@@ -816,3 +816,9 @@ line instead."
           (propertize  warning 'face 'find-file-root-header-face))))
 
 (add-hook 'find-file-root-hook 'find-file-root-header-warning)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; fixed point completion
+
+(load "~/.emacs.d/fixed-point-completion/fixed-point-completion.el")
+(enable-fixed-point-completions)
