@@ -7,3 +7,6 @@
 [submodule "emacs.d/fixed-point-completion"]
 	path = emacs.d/fixed-point-completion
 	url = git://github.com/smithzvk/fixed-point-completion.git
+[submodule "emacs.d/e-sink"]
+	path = emacs.d/e-sink
+	url = git://github.com/lewang/e-sink.git

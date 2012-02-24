@@ -822,3 +822,9 @@ line instead."
 
 (load "~/.emacs.d/fixed-point-completion/fixed-point-completion.el")
 (enable-fixed-point-completions)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; fixed point completion
+
+(load "~/.emacs.d/e-sink/e-sink.el")
+(require 'e-sink)
