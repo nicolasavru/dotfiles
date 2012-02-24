@@ -43,10 +43,11 @@
 ;(add-to-list 'emms-player-list 'emms-player-mpd)
 (require 'emms-player-mplayer)
 ;(add-to-list 'emms-player-list 'emms-player-mplayer)
-(emms-default-players)
+;(emms-default-players)
+(setq emms-player-list '(emms-player-mplayer-playlist emms-player-mplayer emms-player-vlc))
 (add-to-list 'emms-player-list 'emms-player-mikmod)
 
-;(setq emms-player-list '(emms-player-vlc)
+;(setq emms-player-list '(emms-player-vlc))
 
 ;; Libtag support
 (require 'emms-info-libtag)
