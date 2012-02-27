@@ -731,7 +731,8 @@ line instead."
       '((emacs-lisp-mode . lisp-complete-symbol)
         (text-mode . dabbrev-completion) ;; this is the "default" emacs expansion function
         (clojure-mode . slime-complete-symbol)
-        (lisp-mode . slime-complete-symbol))) ;; see update below
+        (lisp-mode . slime-complete-symbol)
+        (matlab-shell-mode . matlab-shell-tab))) ;; see update below
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ELPA
@@ -828,3 +829,10 @@ line instead."
 
 (load "~/.emacs.d/e-sink/e-sink.el")
 (require 'e-sink)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; matlab
+
+(add-to-list 'load-path "~/.emacs.d/matlab-emacs")
+(load-library "matlab-load")
+(add-to-list 'auto-mode-alist '("\\.m$" . matlab-mode))
