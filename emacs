@@ -27,6 +27,11 @@
 
 (load-file "~/.emacs.d/conf/private.el")
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; misc functions
+
+(load-file "~/.emacs.d/conf/misc_funcs.el")
+
 ;http://www.djcbsoftware.nl/dot-emacs.html
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; general settings
@@ -835,4 +840,4 @@ line instead."
 
 (add-to-list 'load-path "~/.emacs.d/matlab-emacs")
 (load-library "matlab-load")
-(add-to-list 'auto-mode-alist '("\\.m$" . matlab-mode))
+(add-to-list 'auto-mode-alist '("\\.m$" . matlab-mode))4
