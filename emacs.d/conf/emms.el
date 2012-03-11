@@ -16,9 +16,6 @@
 
 (setq emms-lastfm-client-session-key-file "~/.emacs.d/emms/emms-lastfm-client-sessionkey")
 (require 'emms-lastfm-client)
-(setq emms-lastfm-client-username "nicolasavru"
-      emms-lastfm-client-api-key  "73bbb2acb495f9eb0c265f0aadabc6c3"
-      emms-lastfm-client-api-secret-key "0fca4c686b97cd00ccbc178b6c7878cb")
 
 ;(emms-lastfm-client)
 (emms-lastfm-scrobbler-enable)
