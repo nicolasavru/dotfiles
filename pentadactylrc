@@ -1,0 +1,9 @@
+"hg6009 (created: 2011/03/10 00:00:05)
+
+loadplugins '\.(js|penta)$'
+group user
+highlight StatusLineNorl color:0x2f4f4f
+highlight StatusLineNormal color:0x2f4f4f
+set passkeys='https://mail\.google\.com':xsem!#rRaAvN[]{}z.IU=-gidac/?lujkonp
+
+" vim: set ft=pentadactyl:
