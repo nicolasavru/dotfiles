@@ -62,7 +62,8 @@
  '(whitespace-newline ((t (:foreground "ivory4" :background "gray7"))))
 
  ;; erc
- '(erc-prompt-face ((t (:wight bold :background "#003500"))))
+ '(erc-prompt-face ((t (:weight bold :background "#003500"))))
+ '(erc-current-nick-face ((t (:weight bold :foreground "brown"))))
 
  ;; highlighing
  '(highlight-indent-face ((t (:foreground "ghost white" :background "gray9"))))

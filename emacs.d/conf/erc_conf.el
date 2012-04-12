@@ -174,6 +174,35 @@ matches a regexp in `erc-keywords'."
 ;(add-hook 'erc-server-PRIVMSG-functions 'my-erc-page-me-PRIVMSG)
 (add-hook 'erc-server-PRIVMSG-functions 'erc-notify-PRIVMSG)
 
+(defadvice erc-track-find-face (around erc-track-find-face-promote-query activate)
+  (if (erc-query-buffer-p) 
+      (setq ad-return-value (intern "erc-current-nick-face"))
+    ad-do-it))
+
+(defadvice erc-track-modified-channels (around erc-track-modified-channels-promote-query activate)
+  (if (erc-query-buffer-p) (setq erc-track-priority-faces-only 'nil))
+  ad-do-it
+  (if (erc-query-buffer-p) (setq erc-track-priority-faces-only 'all)))
+
+(setq erc-format-query-as-channel-p t
+        erc-track-priority-faces-only 'all
+        erc-track-faces-priority-list '(erc-error-face
+                                        erc-current-nick-face
+                                        erc-keyword-face
+                                        erc-nick-msg-face
+                                        erc-direct-msg-face
+                                        erc-dangerous-host-face
+                                        erc-notice-face
+                                        erc-prompt-face))
+
+(setq erc-current-nick-highlight-type 'nick)
+;(setq erc-keywords '("\\berc[-a-z]*\\b" "\\bemms[-a-z]*\\b"))
+(setq erc-track-exclude-types '("JOIN" "PART" "QUIT" "NICK" "MODE"))
+(setq erc-track-use-faces t)
+(setq erc-track-faces-priority-list
+      '(erc-current-nick-face erc-keyword-face))
+(setq erc-track-priority-faces-only 'all)
+
 ;; (require 'notify)
 ;; (defun my-notify-erc (match-type nickuserhost message)
 ;;   "Notify when a message is received."
