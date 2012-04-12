@@ -5,4 +5,4 @@ emacs.d/auto-save-list/*
 emacs.d/cache/*
 emacs.d/tramp
 emacs.d/emms/*
-
+emacs.d/elpa/archives/*
