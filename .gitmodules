@@ -10,3 +10,6 @@
 [submodule "emacs.d/e-sink"]
     path = emacs.d/e-sink
     url = git://github.com/lewang/e-sink.git
+[submodule "emacs.d/yasnippet"]
+	path = emacs.d/yasnippet
+	url = git://github.com/capitaomorte/yasnippet.git
