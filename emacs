@@ -366,7 +366,7 @@ line instead."
 
 (setq TeX-auto-save t)
 (setq TeX-parse-self t)
-(setq-default TeX-master nil)
+(setq-default TeX-master t)
 (add-hook 'LaTeX-mode-hook 'auto-fill-mode)
 (add-hook 'LaTeX-mode-hook 'flyspell-mode)
 (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
@@ -730,6 +730,7 @@ line instead."
 ; http://joost.zeekat.nl/2010/06/03/slime-hints-3-interactive-completions-and-smart-tabs/
 (add-to-list 'load-path "~/.emacs.d/smart-tab")
 (require 'smart-tab) ;; make sure smart-tab.el is reachable in your load-path first
+(setq smart-tab-using-hippie-expand t)
 (global-smart-tab-mode 1) ;; switch on smart-tab everywhere
 
 (setq smart-tab-completion-functions-alist
@@ -844,3 +845,36 @@ line instead."
 (add-to-list 'load-path "~/.emacs.d/matlab-emacs")
 (load-library "matlab-load")
 (add-to-list 'auto-mode-alist '("\\.m$" . matlab-mode))4
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; yasnippet
+
+(add-to-list 'load-path "~/.emacs.d/yasnippet")
+(require 'yasnippet)
+(setq yas/root-directory '("~/.emacs.d/yasnippet/snippets" "~/.emacs.d/snippets"))
+(mapc 'yas/load-directory yas/root-directory)
+(add-to-list 'hippie-expand-try-functions-list 'yas/hippie-try-expand)
+(yas/global-mode 1)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; autoinsert
+
+(require 'autoinsert)
+(auto-insert-mode)  ;;; Adds hook to find-files-hook
+(setq auto-insert-directory "~/.emacs.d/snippets/skeletons") ;;; Or use custom, *NOTE* Trailing slash important
+(setq auto-insert-query nil) ;;; If you don't want to be prompted before insertion
+
+(defun my/autoinsert-yas-expand()
+  "Replace text in yasnippet template."
+  (yas/expand-snippet (buffer-string) (point-min) (point-max)))
+
+(custom-set-variables
+ '(auto-insert 't)
+ '(auto-insert-alist '((("\\.\\(h\\|hpp\\)\\'" . "C / C++ header") . ["skeleton.h" c++-mode my/autoinsert-yas-expand])
+                       (("\\.c\\'" . "C source") . ["skeleton.c" my/autoinsert-yas-expand])
+                       (("\\.cpp\\'" . "C++ source") . ["skeleton.cpp" my/autoinsert-yas-expand])
+                       (("\\.sh\\'" . "Shell script") . ["skeleton.sh" my/autoinsert-yas-expand])
+                       (("\\.el\\'" . "Emacs Lisp") . ["skeleton.el" my/autoinsert-yas-expand])
+                       (("\\.py\\'" . "Python script") . ["skeleton.py" my/autoinsert-yas-expand])
+                       (("[mM]akefile\\'" . "Makefile") . ["Makefile" my/autoinsert-yas-expand])
+                       (("\\.tex\\'" . "TeX/LaTeX") . ["skeleton.tex" my/autoinsert-yas-expand]))))
