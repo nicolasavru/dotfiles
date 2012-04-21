@@ -13,6 +13,6 @@
 [submodule "emacs.d/yasnippet"]
     path = emacs.d/yasnippet
     url = git://github.com/capitaomorte/yasnippet.git
-[submodule "emacs.d/snippets/yasnippets-latex"]
+[submodule "emacs.d/snippets/latex-mode/yasnippets-latex"]
     path = emacs.d/snippets/latex-mode/yasnippets-latex
     url = git://github.com/madsdk/yasnippets-latex.git
