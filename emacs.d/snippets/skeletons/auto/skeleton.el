@@ -3,12 +3,12 @@
     (TeX-run-style-hooks
      "fancyhdr"
      "geometry"
+     "siunitx"
      "url"
      "multirow"
      "mathtools"
      "amsmath"
      "graphicx"
-     "tabto"
      "enumerate"
      "babel"
      "english"
