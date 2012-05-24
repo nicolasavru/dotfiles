@@ -576,11 +576,11 @@ line instead."
   (c-indent-command)
   (insert-string "/* DEBUG */\n")
   (c-indent-command)
-  (insert-string "printf(\"\\n\");\n")
+  (insert-string "fprintf(stderr, \"\\n\");\n")
   (c-indent-command)
   (insert-string "/* DEBUG */")
   (previous-line 1)
-  (backward-char 3)
+  (forward-char 6)
   )
 
 ;; remove flagged debug statements
@@ -676,6 +676,8 @@ line instead."
       (load-file "~/.emacs.d/themes/nicolasavru-dark-theme.el")
     (custom-set-faces '(whitespace-space ((((class color) (background light)) (:foreground "aquamarine3")))))))
 
+
+(set-face-attribute 'default nil :height 100)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; initial frames
