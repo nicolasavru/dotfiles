@@ -685,9 +685,10 @@ line instead."
 (make-frame-command)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ThreeWindows
+;; Window/Frame Manager
 
 (load-file "~/.emacs.d/conf/three-windows.el")
+(require 'transpose-frame)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; magit
@@ -880,3 +881,11 @@ line instead."
                        (("\\.py\\'" . "Python script") . ["skeleton.py" my/autoinsert-yas-expand])
                        (("[mM]akefile\\'" . "Makefile") . ["Makefile" my/autoinsert-yas-expand])
                        (("\\.tex\\'" . "TeX/LaTeX") . ["skeleton.tex" my/autoinsert-yas-expand]))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ace-jump-mode
+
+(add-to-list 'load-path "~/.emacs.d/ace-jump-mode")
+(require 'ace-jump-mode)
+(define-key global-map (kbd "<insert>") 'ace-jump-mode)
