@@ -16,3 +16,6 @@
 [submodule "emacs.d/snippets/latex-mode/yasnippets-latex"]
     path = emacs.d/snippets/latex-mode/yasnippets-latex
     url = git://github.com/madsdk/yasnippets-latex.git
+[submodule "emacs.d/ace-jump-mode"]
+	path = emacs.d/ace-jump-mode
+	url = git://github.com/winterTTr/ace-jump-mode.git

@@ -41,7 +41,9 @@
 (require 'emms-player-mplayer)
 ;(add-to-list 'emms-player-list 'emms-player-mplayer)
 ;(emms-default-players)
-(setq emms-player-list '(emms-player-mplayer-playlist emms-player-mplayer emms-player-vlc))
+;(setq emms-player-list '(emms-player-mplayer-playlist emms-player-mplayer emms-player-vlc))
+(setq emms-player-list '(emms-player-mplayer emms-player-vlc))
+;(setq emms-player-list '(emms-player-mpg321 emms-player-ogg123 emms-player-mplayer))
 (add-to-list 'emms-player-list 'emms-player-mikmod)
 
 ;(setq emms-player-list '(emms-player-vlc))
