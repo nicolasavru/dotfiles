@@ -18,7 +18,9 @@
 (require 'emms-lastfm-client)
 
 ;(emms-lastfm-client)
-(emms-lastfm-scrobbler-enable)
+;(emms-lastfm-scrobbler-enable)
+(emms-lastfm-scrobbler-disable)
+
 (setq emms-playlist-default-major-mode 'emms-playlist-mode)
 (emms-cache-disable)
 
