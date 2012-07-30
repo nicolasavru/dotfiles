@@ -141,6 +141,7 @@ line instead."
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
 
+(setq Man-notify-method 'pushy)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; the modeline
@@ -640,6 +641,9 @@ line instead."
 
 ;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
 
+(global-set-key (kbd "<f5>") 'hyperspec-lookup)
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ERC
 
@@ -889,3 +893,52 @@ line instead."
 (add-to-list 'load-path "~/.emacs.d/ace-jump-mode")
 (require 'ace-jump-mode)
 (define-key global-map (kbd "<insert>") 'ace-jump-mode)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; w3m
+
+(require 'w3m-load)
+
+(setq browse-url-browser-function 'w3m-browse-url)
+(autoload 'w3m-browse-url "w3m" "Ask a WWW browser to show a URL." t)
+(global-set-key "\C-xm" 'browse-url-at-point)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; wanderlust
+
+
+;(add-to-list 'load-path "~/.emacs.d/wanderlust/wl")
+(add-to-list 'load-path "~/.emacs.d/wanderlust/elmo")
+(add-to-list 'load-path "~/.emacs.d/wanderlust/utils")
+
+
+;(add-to-list 'load-path "/usr/share/emacs/site-lisp/wl")
+(add-to-list 'load-path "~/.emacs.d/bbdbv3-wl/lisp")
+(require 'bbdbV3-wl)
+
+;; workaround: re-run this nonsense (pulled from bbdb.el)
+(eval-when-compile              ; pacify the compiler.
+  (autoload 'widget-group-match "wid-edit")
+  (autoload 'Electric-pop-up-window "electric")
+  (autoload 'Electric-command-loop "electric")
+  (autoload 'bbdb-migrate "bbdb-migrate")
+  (autoload 'bbdb-do-records "bbdb-com")
+  (autoload 'bbdb-append-display-p "bbdb-com")
+  (autoload 'bbdb-toggle-records-layout "bbdb-com")
+  (autoload 'bbdb-dwim-mail "bbdb-com")
+  (autoload 'bbdb-layout-prefix "bbdb-com")
+  (autoload 'bbdb-completing-read-records "bbdb-com")
+  (autoload 'bbdb-search "bbdb-com")
+  (autoload 'bbdb-search-prompt "bbdb-com")
+  (autoload 'mail-position-on-field "sendmail")
+  (autoload 'vm-select-folder-buffer "vm-folder")
+
+  ;; cannot use autoload for variables...
+  (defvar message-mode-map) ;; message.el
+  (defvar mail-mode-map) ;; sendmail.el
+  (defvar gnus-article-buffer)) ;; gnus-art.el
+
+
+;; (autoload 'wl "wl" "Wanderlust" t)
+;; (autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
+;; (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)

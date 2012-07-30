@@ -17,5 +17,11 @@
     path = emacs.d/snippets/latex-mode/yasnippets-latex
     url = git://github.com/madsdk/yasnippets-latex.git
 [submodule "emacs.d/ace-jump-mode"]
-	path = emacs.d/ace-jump-mode
-	url = git://github.com/winterTTr/ace-jump-mode.git
+    path = emacs.d/ace-jump-mode
+    url = git://github.com/winterTTr/ace-jump-mode.git
+[submodule "emacs.d/wanderlust"]
+    path = emacs.d/wanderlust
+    url = git://github.com/dmj/wanderlust.git
+[submodule "emacs.d/ASynK"]
+	path = emacs.d/ASynK
+	url = git://github.com/skarra/ASynK.git

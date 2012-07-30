@@ -1,0 +1,99 @@
+* Important API Functions
+** Reading and Querying
+*** bbdb-display-records
+*** bbdb-search
+   Search a regexp in any field.
+
+   Use with =bbdb-records= like this:
+
+: (bbdb-search (bbdb-records) regexp)
+
+*** bdbb-records
+    Retrieve all records.
+
+*** Getting Specific Fields
+**** bbdb-record-*
+** Writing
+*** bbdb-save
+    Save all the database.
+*** Setting Specific Fields
+**** bbdb-record-set-*
+* Structures
+** bdbb-records structure
+   Is a list of arrays:
+
+#+BEGIN_SRC emacs-lisp
+  (
+   [first entry] 
+   [second entry] 
+   ... 
+   [last entry]
+  )   
+#+END_SRC
+
+** Record Structure
+   Is an Array of elements. Depending on the position is the name, address, etc.
+   
+   Some elements may be strings, lists, an array or an alist. /See bbdb.el at line 1677./
+
+1. *Name* as String
+2. *Surname* as String
+3. *Affix* as String
+4. *Aka* as a list of Strings
+5. *Organization* 
+6. *Phone* A list 
+   1. label
+   2. Area
+   3. exchange
+   4. suffix
+   5. extension
+7. *Address* as a list of Strings
+   1. label
+   2. streets
+   3. city
+   4. state
+   5. postcode
+   6. country
+8. *Mail*
+9. *Notes*
+10. *Cache info*
+    1. fl-name
+    2. lf-name
+    3. sortkey
+    4. marker
+    5. deleded-p
+
+
+
+#+BEGIN_SRC emacs-lisp
+  [
+   ;; 0
+   "\"Nombre y apellido\"" ;; 1
+   ;; 2
+   ;; 3
+   ;; 4
+   ;; 5
+   ;; 6
+#+END_SRC
+
+* Licence
+
+    BBDB.org
+    Copyright (C) 2012  Giménez, Christian N.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+    Sábado 18 De Febrero Del 2012    
+
+

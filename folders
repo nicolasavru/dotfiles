@@ -1,0 +1,20 @@
+Gmail {
+      %/
+      Recent-Gmail {
+             /since:60daysago/%INBOX:nicolasavru/clear@imap.gmail.com:993! "Inbox"
+             /since:60daysago/%Cooper/uLab:nicolasavru/clear@imap.gmail.com:993! "uLab"
+             /since:60daysago/%Cooper/CUCC:nicolasavru/clear@imap.gmail.com:993! "CUCC"
+             /since:14daysago/%Mailing Lists:nicolasavru/clear@imap.gmail.com:993! "Mailing Lists"
+      }
+}
+
+Cooper {
+       %INBOX:avruti/clear@farley2.cooper.edu! "Inbox"
+       %INBOX.Sent:avruti/clear@farley2.cooper.edu! "Sent"
+       %INBOX.Drafts:avruti/clear@farley2.cooper.edu! "Drafts"
+       %INBOX.Trash:avruti/clear@farley2.cooper.edu! "Trash"
+       Recent-Cooper {
+              /since:60daysago/%INBOX:avruti/clear@farley2.cooper.edu! "Inbox"
+       }
+}
+

@@ -1,0 +1,94 @@
+#+TITLE:     interface.org
+#+AUTHOR:    Christian
+#+EMAIL:     cnngimenez@gmail.com
+#+DATE:      2012-03-01 jue
+#+DESCRIPTION: Description of the commands and variables available for the user.
+#+KEYWORDS: 
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:nil skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   
+#+LINK_HOME: 
+
+
+* About This Document
+  This document has all the interface of the BBDBV3-Wl. 
+
+  The intention is to maintain an organized list of every function that the user can call using M-x or by a sequence of keys.
+
+
+* Mime View Mode
+  
+  This adds functionality for searching a person data from the sender's e-mail address. Useful when you are using the Wanderlust's Summary and reading mails with the "n" key.
+
+
+** Functions
+
+   | Function                  | What it Does                                    | Keys | Related Hooks             |
+   |---------------------------+-------------------------------------------------+------+---------------------------|
+   | bbdb-wl-get-update-record | Shows or ask for update the sender of the email |      | wl-message-redisplay-hook |
+   |                           |                                                 |      |                           |
+   
+
+** Customize
+   
+   The customization refers mostly about how it should update: the user wants to be asked about how to update the sender info?
+
+   | Variable Name         |
+   |-----------------------|
+   | bbdb-wl-update-       |
+   
+* Mime Edit Mode
+  
+  This make possible to search a person by its data and insert her/his email address.
+  
+
+** Functions
+
+   | Function                  | What it Does                                                 | Keys  | Related Hooks |
+   |---------------------------+--------------------------------------------------------------+-------+---------------|
+   | bbdb-wl-insert-person-To  | Search in the BBDB for a person and insert address as "To:"  | C-b T |               |
+   | bbdb-wl-insert-person-CC  | Search in the BBDB for a person and insert address as "CC:"  | C-b C |               |
+   | bbdb-wl-insert-person-BCC | Search in the BBDB for a person and insert address as "BCC:" | C-b B |               |
+   |                           |                                                              |       |               |
+
+** Customize
+   
+* Wanderlust's Address Manager Syncrhonization
+
+  The synchronization can be done from BBDB to Addressbook, at the inverse, or both ways.
+
+** Functions
+
+| Function                           | What it does                         | Keys | Related hooks |
+|------------------------------------+--------------------------------------+------+---------------|
+| bbdb-wl-give-data-to-addressbook   | Synchronize from BBDB to Addressbook |      |               |
+| bbdb-wl-take-data-from-addressbook | Synchronize from Addressbook to BBDB |      |               |
+| bbdb-wl-sinchronize-addressbook    | Synchronize both ways                |      |               |
+
+
+** Customize
+
+* Licence
+    interface.org
+    Copyright (C) 2012  Giménez, Christian N.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+    Jueves 01 De Marzo Del 2012    
+
+

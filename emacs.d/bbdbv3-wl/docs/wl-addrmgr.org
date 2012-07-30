@@ -1,0 +1,65 @@
+
+#+TITLE:     wl-addrmgr.org
+#+AUTHOR:    Christian
+#+EMAIL:     cnngimenez@gmail.com
+#+DATE:      2012-02-18 sáb
+#+DESCRIPTION: Wanderlust's Address Manager 
+#+KEYWORDS: 
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:nil skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   
+#+LINK_HOME: 
+
+* Functions API
+** Reading
+*** wl-addrmgr-local-list
+    Return an internal list used for printing in the addrmgr.
+    
+    [[*Records]]
+    
+    Accept one parameter called "reload"
+
+*** wl-address-list
+    A variable with all the contacts. It's value is a list of each entry(a list of list with three elements).
+    
+    You must execute =wl-address-init= function to initialize this variable, if not it only contains =nil=.
+    
+* Structures
+** Records
+   All records are a list of lists where each list is an entry in the address book ready for printing.
+   
+   Each entry has three elements:
+   
+   1. *Mail*
+   2. *Petname*
+   3. *Real Name*
+
+#+BEGIN_SRC emacs-lisp
+      ("mail@mymail.com" "a petname" "a real name")
+#+END_SRC
+      
+
+* Licence
+    wl-addrmgr.org
+    Copyright (C) 2012  Giménez, Christian N.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+    Sábado 18 De Febrero Del 2012    
+
+

@@ -1,0 +1,119 @@
+#+TITLE:     README.org
+#+AUTHOR:    Christian
+#+EMAIL:     cnngimenez@gmail.com
+#+DATE:      2011-12-05 lun
+#+DESCRIPTION: Readme file for BBDBV3-WL
+#+KEYWORDS: 
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:nil skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:info toc:t ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   
+#+LINK_HOME: 
+
+* Introduction
+  BBDBV3-WL is a library that can integrate BBDB(Version 3) in Wanderlust. All these three utilities are used in emacs.
+
+  But, what is BBDB and Wanderlust? Here is a short explanation.
+
+** BBDB
+   BBDB is the "Insidious Big Brother DataBase". This database store address, phones numbers, e-mail addresses and the like.
+
+   This database by default can integrate with other utilities in emacs, like rmail, gnus, etc. The main purpose for this integration is to scan for information to add into de database.
+
+   If you want to integrate this utilities with BBDB you need a library or module with lots of functions. By defaults it comes with them for the most commons ones, so you don't need to do anything.
+
+
+
+   BBDB has two main versions at this days(today is December 05 of 2011): 
+     - the complete and stable version 2.X
+     - and an alpha version 3.
+
+
+   The version 2.x has already a BBDB and Wanderlust integration. The files needed for this integration comes with the BBDBV2 package.
+
+
+   The version 3.x hasn't a BBDB and Wanderlust integration(as far as I searched) 
+
+
+
+   BBDB V3.x is founded in savannah at this page:  http://savannah.nongnu.org/projects/bbdb
+
+** WanderLust
+   Wanderlust is an e-mail client. According with the [[www.emacswiki.org][EmacsWiki]]:
+
+   Wanderlust is a mail/news reader for Emacs(en) apparently written from the ground up for IMAP. It seems to have very good support for Japanese, but it works quite-well for this English-speaker.
+   
+   [[http://www.emacswiki.org/emacs/WanderLust][See EmacsWiki Wanderlust Page]]
+
+   More experts can call this software "MUA"(Mail User Agents). WanderLust is used for reading mails and news from the POP3, IMAP, NNTP, etc. It has a variety of options for retrieving, saving, filtering mails in the Maildir formats.
+
+   You can find more information in the [[http://www.emacswiki.org/emacs/WanderLust][emacs wiki page]].
+
+   There is a project in github([[https://github.com/wanderlust/wanderlust]]) and in gohome.org([[http://www.gohome.org/wl/]]).
+
+* Download Files
+  You can download these files from 
+
+  [[http://download.gna.org/bbdbv3-wl/]]
+
+* Installing
+  You need to insert this line at the end of the [[file:~/.emacs]] file.
+
+#+BEGIN_SRC elisp
+  (setq load-path (cons "PATH-TO-BBDBV3-WL" load-path))
+  (require 'bbdbV3-wl)
+#+END_SRC
+
+  Where PATH-TO-BBDBV3-WL is the path where the BBDBV3-Wl files are.
+
+* Using
+
+  Remember, you must have created a BBDB databse before according to BBDB Version 3 says. Read its readme!
+
+  After the BBDB database is created, you just have to use Wanderlust as usual. Call it using:
+
+: M-x wl
+  
+  /Again, I assume that you know how to use it. If you don't know, read its info or the [[http://www.emacswiki.org/emacs/WanderLust][see the EmacsWiki Wanderlust page]] ./
+
+  
+  When you visit an email for reading it, or press n, p or Return in the Summary folder buffer, BBDBV3-Wl will try to find the entries according to the emails address and names, showing what it found in a subbuffer at the bottom.
+
+  The subbuffer is the BBDB! Use it normally!
+
+  If the email address, the name, or something usefull is founded, BBDBV3-Wl will ask you if you would like to add it!
+
+* Colaborate
+  If you would like to colaborate in the project, you just has to go to the gna.org page: 
+
+  [[https://gna.org/projects/bbdbv3-wl]]
+
+  The homepage is:
+
+  [[http://home.gna.org/bbdbv3-wl]]
+
+
+* License
+
+    README.org
+    Copyright (C) 2011  Giménez, Christian N.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+    Lunes 05 De Diciembre Del 2011    
+
+

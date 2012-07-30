@@ -1,0 +1,111 @@
+#+TITLE:     TODO.org
+#+AUTHOR:    Christian Giménez
+#+EMAIL:     cnngimenez@gmail.com
+#+DATE:      2011-12-05 lun
+#+DESCRIPTION: TODO file for BBDBV3-WL.
+#+KEYWORDS: 
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:nil skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:info toc:t ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   Readme.org
+#+LINK_HOME: Readme.org
+
+* Wanderlust Folder Integration[0%]
+  Or MIME-View integration.
+** TODO Consider reciever?
+   We know that the reciever are the same user who check the mails... We should consider him?
+
+   Suppose we recieve an email from a group of users. It's may be not the same address of ours.
+
+** TODO Filter out empty or "noreply" entries
+   Empty entries, or mails with "noreply" are considered as normal entries.
+   
+   In this cases we must ignore it.
+
+   The most common way to do this is to give a customizable option to the user with a default behavior. Maybe a regexp or a list of regexps.
+** TODO If a name exists already, but the mail address is new, add the mail 
+   If the name is in the BBDB, but the email address isn't the same, the BBDBV3 must add it as an alternative or another mail address of the user.
+
+** TODO Recognize address formats in the mails
+   We should use a configurable regexp to recognize address directions.
+   
+   If user wants to add it, insert in the correct entry in the BBDB.
+** TODO Recognize telephones formats in the mails
+   We should use a configurable regexp to recognize telephones. 
+   
+   And, if user wants, add it in the correct entry in the BBDB.
+** TODO Recognize "aka's"
+   Idem
+* Wandrelust Addressbook Integration[0%]
+** TODO Sinchronization for the Addressbook
+   The addressbook must be up-to date. 
+
+   The sinchronization must be both sides: 
+   - From BBDB V3 to Addressbook
+   - From Addressbook to BBDB.
+
+   The problem is that the addressbook mustn't have to much entries. 
+   So We have to re-consider the last way.
+
+   Remember, when BBDB-WL has to do the sinchronization? 
+   1) At startup: But any new entry in the addressbook won't be reflected in the BBDB unless the functions or hooks are modified.
+   2) At the end: BBDB won't have the addressbook entries, unless a function for sinchronization is called at startup.
+   3) Both? 
+   4) At user request.
+
+** TODO Updating the Addressbook to BBDB can make conflicts 
+   Two persons can be called in the same way, what happens there?
+
+   For example:
+
+   You have two Peters in the addressbook, you have to update BBDB. Which you have to update?
+
+   If you run =bbdb-wl-take-data-from-addressbook= will try to update Peters with BBDB's Peters. In that case which Peter are the one selected?
+
+   The computer must ask the user which Peter to update with the information selected. The message may show:
+
+   "There are two records that answer the name Peter. Which one update with this data?
+   Data:
+   Peter - Aka: Peter_a - peter_a@mail1.com
+   Peter - Aka: Peter_b - peter_b@mail2.com
+   Choices:
+   Peter Billy
+   Peter Aston."
+
+** TODO bbdb-wl-update-record doesn't update really, it set!
+   This function =bbdb-wl-update-record= doesn't update, instead it change the attributes.
+   
+* Mime-Edit Integration[0%]
+** TODO Inserting addresses in the "To:" field
+   Emails addresses in the Big Brother Database can be used for inserting in the "To:", "BCC:" and/or "CC:" fields.
+
+   BBDB-WL must provide a function, and keys access for use BBDB to insert addresses into Mime-edit mayor mode. 
+   It could be the same BBDB-Wl keys as the last version(BBDB V2.x).
+
+
+  
+
+* License
+  
+    TODO.org
+    Copyright (C) 2011  Giménez, Christian N.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+    Lunes 05 De Diciembre Del 2011    
+
+
