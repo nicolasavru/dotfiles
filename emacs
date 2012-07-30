@@ -841,7 +841,7 @@ line instead."
 (enable-fixed-point-completions)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; fixed point completion
+;; e-sink
 
 (load "~/.emacs.d/e-sink/e-sink.el")
 (require 'e-sink)
@@ -894,7 +894,7 @@ line instead."
 (require 'ace-jump-mode)
 (define-key global-map (kbd "<insert>") 'ace-jump-mode)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; w3m
 
 (require 'w3m-load)
@@ -903,7 +903,7 @@ line instead."
 (autoload 'w3m-browse-url "w3m" "Ask a WWW browser to show a URL." t)
 (global-set-key "\C-xm" 'browse-url-at-point)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; wanderlust
 
 
@@ -942,3 +942,19 @@ line instead."
 ;; (autoload 'wl "wl" "Wanderlust" t)
 ;; (autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
 ;; (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; jabber
+
+(require 'jabber-autoloads)
+
+(setq jabber-show-resources 'always)
+(add-hook 'jabber-post-connect-hook 'jabber-autoaway-start)
+(setq jabber-autoaway-method 'jabber-xprintidle-program)
+(jabber-mode-line-mode)
+(add-hook 'jabber-chat-mode-hook 'flyspell-mode)
+(setq jabber-chat-time-format "%H:%M:%S")
+(setq jabber-chat-delayed-time-format "%Y-%m-%d %H:%M:%S")
+(setq jabber-alert-presence-hooks nil)
