@@ -207,7 +207,6 @@
          (wl-draft-folder . "%INBOX.Drafts:avruti/clear@farley2.cooper.edu!"))
         ((string-match "gmail.com" wl-draft-parent-folder)
          (template . "gmail")
-         (wl-from . "Nicolas Avrutin <nicolasavru@gmail.com>")
          (wl-smtp-posting-user . "nicolasavru")
          (wl-smtp-posting-server . "smtp.gmail.com")
          (wl-smtp-authenticate-type ."plain")
@@ -239,6 +238,10 @@
 ;;         (("From" . "rasputin@cooper.edu") . ,(expand-file-name "~/.emacs.d/signature.d/rasputin@cooper.edu"))
 ;;         (("From" . "nicolasavru@gmail.com") . ,(expand-file-name "~/.emacs.d/signature.d/nicolasavru@gmail.com"))))
 
+(setq signature-file-name "~/.signature")
+(setq signature-insert-at-eof t)
+(setq signature-delete-blank-lines-at-eof t)
+
 ;;Cycle through templates with arrow keys
 (define-key wl-template-mode-map (kbd "<right>") 'wl-template-next)
 (define-key wl-template-mode-map (kbd "<left>") 'wl-template-prev)
@@ -250,3 +253,6 @@
 
 ;; mark sent messages (folder carbon copy) as read.
 (setq wl-fcc-force-as-read t)
+
+
+(add-hook 'wl-draft-mode-hook 'flyspell-mode)

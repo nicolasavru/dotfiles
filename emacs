@@ -293,6 +293,9 @@ line instead."
 (when (fboundp 'multi-term-dedicated-toggle)
   (global-set-key (kbd "C-<f12>") 'multi-term-dedicated-toggle)) ; multi-term
 
+(global-set-key (kbd "<f25>") 'browse-url-firefox)
+
+
 ;; program shortcuts
 (global-set-key (kbd "C-c E") ;; .emacs
   (lambda()(interactive)(find-file "~/.emacs")))
@@ -769,6 +772,10 @@ line instead."
 (eval-after-load "whitespace"
   '(diminish 'global-whitespace-mode))
 
+(add-hook 'emacs-lisp-mode-hook 
+  (lambda()
+    (setq mode-name "el"))) 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tramp
 
@@ -907,7 +914,7 @@ line instead."
 ;; wanderlust
 
 
-;(add-to-list 'load-path "~/.emacs.d/wanderlust/wl")
+;; (add-to-list 'load-path "~/.emacs.d/wanderlust/wl")
 (add-to-list 'load-path "~/.emacs.d/wanderlust/elmo")
 (add-to-list 'load-path "~/.emacs.d/wanderlust/utils")
 
@@ -943,7 +950,11 @@ line instead."
 ;; (autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
 ;; (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
 
+(global-set-key (kbd "<f7>") (lambda ()
+                               (interactive)
+                               (switch-to-buffer "Folder")))
 
+(wl)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; jabber
@@ -951,10 +962,23 @@ line instead."
 (require 'jabber-autoloads)
 
 (setq jabber-show-resources 'always)
-(add-hook 'jabber-post-connect-hook 'jabber-autoaway-start)
-(setq jabber-autoaway-method 'jabber-xprintidle-program)
-(jabber-mode-line-mode)
+(add-hook 'jabber-post-connect-hooks 'jabber-autoaway-start)
+(setq jabber-autoaway-method 'jabber-xprintidle-get-idle-time)
 (add-hook 'jabber-chat-mode-hook 'flyspell-mode)
 (setq jabber-chat-time-format "%H:%M:%S")
 (setq jabber-chat-delayed-time-format "%Y-%m-%d %H:%M:%S")
-(setq jabber-alert-presence-hooks nil)
+(setq jabber-default-status "There is beauty in complexity, but elegance in simplicity.")
+;(setq jabber-alert-presence-hooks nil)
+
+(jabber-connect-all)
+(jabber-mode-line-mode)
+
+;; don't clobber my minibuffer!
+(define-jabber-alert echo "Show a message in the echo area"
+  (lambda (msg)
+    (unless (minibuffer-prompt)
+      (message "%s" msg))))
+
+(global-set-key (kbd "<f6>") (lambda ()
+                               (interactive)
+                               (switch-to-buffer "*-jabber-roster-*")))
