@@ -178,6 +178,7 @@
 
 
 (define-key wl-draft-mode-map (kbd "<C-tab>") 'bbdb-complete-mail)
+(setq bbdb-complete-mail-allow-cycling t)
 
 ;; multiple accounts
 ;; You should set this variable if you use multiple e-mail addresses.
@@ -254,5 +255,23 @@
 ;; mark sent messages (folder carbon copy) as read.
 (setq wl-fcc-force-as-read t)
 
-
 (add-hook 'wl-draft-mode-hook 'flyspell-mode)
+
+(setq org-footnote-auto-label 'plain)
+(define-key wl-draft-mode-map (kbd "C-c w f") 'org-footnote-action)
+
+(require 'boxquote)
+(define-key wl-draft-mode-map (kbd "C-c w q") 'boxquote-region)
+
+;; http://emacs-fu.blogspot.com/2008/12/some-simple-tricks-boxquote-footnote.html
+(defun djcb-snip (b e summ)
+  "remove selected lines, and replace it with [snip:summary (n lines)]"
+  (interactive "r\nsSummary:")
+  (let ((n (count-lines b e)))
+    (delete-region b e)
+    (insert (format "[snip%s (%d line%s)]" 
+              (if (= 0 (length summ)) "" (concat ": " summ))
+              n 
+              (if (= 1 n) "" "s")))))
+
+(define-key wl-draft-mode-map (kbd "C-c w s") 'djcb-snip)
