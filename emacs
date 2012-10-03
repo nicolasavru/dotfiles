@@ -297,6 +297,7 @@ line instead."
 
 (global-set-key (kbd "<f25>") 'browse-url-firefox)
 
+(global-set-key (kbd "C-x C-S-e") 'eval-and-replace)
 
 ;; program shortcuts
 (global-set-key (kbd "C-c E") ;; .emacs
@@ -413,14 +414,10 @@ line instead."
 
 (require 'org-install)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-(define-key global-map "\C-cl" 'org-store-link)
-(define-key global-map "\C-ca" 'org-agenda)
-(define-key global-map "\C-cb" 'org-iswitchb)
-(setq org-log-done t)
-
-(setq org-agenda-files (list "~/org/main.org"
-                             "~/org/homework.org"
-                             "~/org/weather.org"))
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-cc" 'org-capture)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cb" 'org-iswitchb)
 
 (require 'google-weather)
 (require 'org-google-weather)
@@ -436,6 +433,72 @@ line instead."
    (lisp . t)
    ))
 
+(setq org-log-done 'note)
+(setq org-log-done 'time)
+(setq org-todo-keywords
+'((sequence "TODO(t)" "STARTED(s@/!)" "WAITING(w@/!)" "DELEGATED(e@/!)" "APPT(@!)" "|" "DONE(d!)" "DEFERRED" "CANCELLED(c@)")))
+
+(eval-after-load "org-agenda"
+  '(progn
+     (define-prefix-command 'org-todo-state-map)
+     (define-key org-mode-map "\C-cx" 'org-todo-state-map)
+     (define-key org-todo-state-map "x"
+       #'(lambda nil (interactive) (org-todo "CANCELED")))
+     (define-key org-todo-state-map "d"
+       #'(lambda nil (interactive) (org-todo "DONE")))
+     (define-key org-todo-state-map "f"
+       #'(lambda nil (interactive) (org-todo "DEFERRED")))
+     (define-key org-todo-state-map "l"
+       #'(lambda nil (interactive) (org-todo "DELEGATED")))
+     (define-key org-todo-state-map "s"
+       #'(lambda nil (interactive) (org-todo "STARTED")))
+     (define-key org-todo-state-map "w"
+       #'(lambda nil (interactive) (org-todo "WAITING")))))
+
+(require 'remember)
+(add-hook 'remember-mode-hook 'org-remember-apply-template)
+(define-key global-map [(control meta ?r)] 'remember)
+
+(custom-set-variables
+ '(org-directory "~/Dropbox/org")
+ '(org-agenda-files (quote ("~/Dropbox/org/todo.org")))
+ '(org-default-notes-file "~/Dropbox/org/notes.org")
+ '(org-mobile-inbox-for-pull "~/Dropbox/org/mobileorg")
+ '(org-agenda-ndays 7)
+ '(org-deadline-warning-days 14)
+ '(org-agenda-show-all-dates t)
+ '(org-agenda-skip-deadline-if-done t)
+ '(org-agenda-skip-scheduled-if-done t)
+ '(org-agenda-start-on-weekday nil)
+ '(org-reverse-note-order t)
+ '(org-fast-tag-selection-single-key (quote expert))
+ '(org-agenda-custom-commands
+   (quote (("d" todo "DELEGATED" nil)
+       ("c" todo "DONE|DEFERRED|CANCELLED" nil)
+       ("w" todo "WAITING" nil)
+       ("W" agenda "" ((org-agenda-ndays 21)))
+       ("A" agenda ""
+        ((org-agenda-skip-function
+          (lambda nil
+        (org-agenda-skip-entry-if (quote notregexp) "\\=.*\\[#A\\]")))
+         (org-agenda-ndays 1)
+         (org-agenda-overriding-header "Today's Priority #A tasks: ")))
+       ("u" alltodo ""
+        ((org-agenda-skip-function
+          (lambda nil
+        (org-agenda-skip-entry-if (quote scheduled) (quote deadline)
+                      (quote regexp) "\n]+>")))
+         (org-agenda-overriding-header "Unscheduled TODO entries: "))))))
+ '(org-remember-store-without-prompt t)
+ '(org-remember-templates
+   (quote ((116 "* TODO %?\n  %u" "~/Dropbox/org/todo.org" "Tasks")
+       (110 "* %u %?" "~/Dropbox/org/notes.org" "Notes"))))
+ '(remember-annotation-functions (quote (org-remember-annotation)))
+ '(remember-handler-functions (quote (org-remember-handler))))
+
+
+
+
 ;; ;; TODO keyword faces
 ;; (setq org-todo-keyword-faces
 ;;       '(("PBUG" . (:background "gold" :foreground "indianred3" :weight bold))
@@ -448,6 +511,8 @@ line instead."
 ;; (setq org-tag-faces
 ;;       '(("PROJ" :background "indianred3" :foreground "cornsilk2" :weight bold)
 ;;     ))
+
+(setq org-mobile-directory "~/Dropbox/org/mobileorg")
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -916,7 +981,7 @@ line instead."
 ;; wanderlust
 
 
-;; (add-to-list 'load-path "~/.emacs.d/wanderlust/wl")
+(add-to-list 'load-path "~/.emacs.d/wanderlust/wl")
 (add-to-list 'load-path "~/.emacs.d/wanderlust/elmo")
 (add-to-list 'load-path "~/.emacs.d/wanderlust/utils")
 
@@ -925,27 +990,27 @@ line instead."
 (add-to-list 'load-path "~/.emacs.d/bbdbv3-wl/lisp")
 (require 'bbdbV3-wl)
 
-;; workaround: re-run this nonsense (pulled from bbdb.el)
-(eval-when-compile              ; pacify the compiler.
-  (autoload 'widget-group-match "wid-edit")
-  (autoload 'Electric-pop-up-window "electric")
-  (autoload 'Electric-command-loop "electric")
-  (autoload 'bbdb-migrate "bbdb-migrate")
-  (autoload 'bbdb-do-records "bbdb-com")
-  (autoload 'bbdb-append-display-p "bbdb-com")
-  (autoload 'bbdb-toggle-records-layout "bbdb-com")
-  (autoload 'bbdb-dwim-mail "bbdb-com")
-  (autoload 'bbdb-layout-prefix "bbdb-com")
-  (autoload 'bbdb-completing-read-records "bbdb-com")
-  (autoload 'bbdb-search "bbdb-com")
-  (autoload 'bbdb-search-prompt "bbdb-com")
-  (autoload 'mail-position-on-field "sendmail")
-  (autoload 'vm-select-folder-buffer "vm-folder")
+;; ;; workaround: re-run this nonsense (pulled from bbdb.el)
+;; (eval-when-compile              ; pacify the compiler.
+;;   (autoload 'widget-group-match "wid-edit")
+;;   (autoload 'Electric-pop-up-window "electric")
+;;   (autoload 'Electric-command-loop "electric")
+;;   (autoload 'bbdb-migrate "bbdb-migrate")
+;;   (autoload 'bbdb-do-records "bbdb-com")
+;;   (autoload 'bbdb-append-display-p "bbdb-com")
+;;   (autoload 'bbdb-toggle-records-layout "bbdb-com")
+;;   (autoload 'bbdb-dwim-mail "bbdb-com")
+;;   (autoload 'bbdb-layout-prefix "bbdb-com")
+;;   (autoload 'bbdb-completing-read-records "bbdb-com")
+;;   (autoload 'bbdb-search "bbdb-com")
+;;   (autoload 'bbdb-search-prompt "bbdb-com")
+;;   (autoload 'mail-position-on-field "sendmail")
+;;   (autoload 'vm-select-folder-buffer "vm-folder")
 
-  ;; cannot use autoload for variables...
-  (defvar message-mode-map) ;; message.el
-  (defvar mail-mode-map) ;; sendmail.el
-  (defvar gnus-article-buffer)) ;; gnus-art.el
+;;   ;; cannot use autoload for variables...
+;;   (defvar message-mode-map) ;; message.el
+;;   (defvar mail-mode-map) ;; sendmail.el
+;;   (defvar gnus-article-buffer)) ;; gnus-art.el
 
 
 ;; (autoload 'wl "wl" "Wanderlust" t)
@@ -961,16 +1026,16 @@ line instead."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; jabber
 
-(require 'jabber-autoloads)
+(require 'jabber)
 
 (setq jabber-show-resources 'always)
-(add-hook 'jabber-post-connect-hooks 'jabber-autoaway-start)
 (setq jabber-autoaway-method 'jabber-xprintidle-get-idle-time)
 (add-hook 'jabber-chat-mode-hook 'flyspell-mode)
 (setq jabber-chat-time-format "%H:%M:%S")
 (setq jabber-chat-delayed-time-format "%Y-%m-%d %H:%M:%S")
 (setq jabber-default-status "There is beauty in complexity, but elegance in simplicity.")
 ;(setq jabber-alert-presence-hooks nil)
+(add-hook 'jabber-post-connect-hooks 'jabber-autoaway-start)
 
 (jabber-connect-all)
 (jabber-mode-line-mode)
