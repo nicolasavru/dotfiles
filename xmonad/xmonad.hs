@@ -25,7 +25,7 @@ import XMonad.Util.WorkspaceCompare
 
 main :: IO ()
 main = do
-  trayerProc <- spawnPipe "trayer --edge bottom --align right --SetDockType true --SetPartialStrut true --expand true --width 3 --transparent true --tint 0x000000 --height 11"
+  trayerProc <- spawnPipe "trayer --edge top --align right --SetDockType true --SetPartialStrut true --widthtype percent --width 10 --heighttype pixel --height 18 --transparent true --alpha 1000 --tint 0x000000 --padding 0"
   xmproc <- spawnPipe "/usr/bin/xmobar ~/.xmobarrc"
   xmonad $ defaultConfig
     { manageHook = manageDocks <+> manageHook defaultConfig,
@@ -45,7 +45,7 @@ main = do
       keys = \c -> myKeys c `M.union` keys defaultConfig c
     }
 
-myWorkspaces = withScreens 3 [ "1", "2", "3", "4", "5", "6", "7", "8", "9" ]
+myWorkspaces = withScreens 4 [ "1", "2", "3", "4", "5", "6", "7", "8", "9" ]
 
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $ [
     ] ++
@@ -54,5 +54,5 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $ [
          , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
     ++
     [((modm .|. mask, key), f sc)
-     | (key, sc) <- zip [xK_w, xK_s, xK_e, xK_d] [0..]
+     | (key, sc) <- zip [xK_w, xK_e, xK_s, xK_d] [0..]
      , (f, mask) <- [(viewScreen, 0), (sendToScreen, shiftMask)]]
