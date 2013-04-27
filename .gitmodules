@@ -1,27 +1,15 @@
-[submodule "emacs.d/google-weather-el"]
-    path = emacs.d/google-weather-el
-    url = git://git.naquadah.org/google-weather-el.git
-[submodule "emacs.d/smart-tab"]
-    path = emacs.d/smart-tab
-    url = git://github.com/genehack/smart-tab.git
 [submodule "emacs.d/fixed-point-completion"]
     path = emacs.d/fixed-point-completion
     url = git://github.com/smithzvk/fixed-point-completion.git
 [submodule "emacs.d/e-sink"]
     path = emacs.d/e-sink
     url = git://github.com/lewang/e-sink.git
-[submodule "emacs.d/yasnippet"]
-    path = emacs.d/yasnippet
-    url = git://github.com/capitaomorte/yasnippet.git
 [submodule "emacs.d/snippets/latex-mode/yasnippets-latex"]
     path = emacs.d/snippets/latex-mode/yasnippets-latex
     url = git://github.com/madsdk/yasnippets-latex.git
-[submodule "emacs.d/ace-jump-mode"]
-    path = emacs.d/ace-jump-mode
-    url = git://github.com/winterTTr/ace-jump-mode.git
 [submodule "emacs.d/wanderlust"]
     path = emacs.d/wanderlust
     url = git://github.com/dmj/wanderlust.git
 [submodule "emacs.d/ASynK"]
-	path = emacs.d/ASynK
-	url = git://github.com/skarra/ASynK.git
+    path = emacs.d/ASynK
+    url = git://github.com/skarra/ASynK.git
