@@ -14,6 +14,11 @@
 (define-key input-decode-map "\e\eOD" [(meta left)])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; packages
+
+(load-file "~/.emacs.d/conf/packages.el")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; custom lisp
 ;; emacs or package lisp files which I have modified
 ;; (possibly awaiting patch acceptance)
@@ -312,7 +317,7 @@ line instead."
     (let ((w (length (number-to-string (count-lines (point-min) (point-max))))))
       (setq linum-format
             `(lambda (line)
-               (propertize (concat
+7               (propertize (concat
                             (truncate-string-to-width
                              "" (- ,w (length (number-to-string line)))
                              nil ?\x2007)
@@ -406,9 +411,6 @@ line instead."
 (global-set-key "\C-cc" 'org-capture)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
-
-(require 'google-weather)
-(require 'org-google-weather)
 
 ;; active Babel languages
 (org-babel-do-load-languages
@@ -677,12 +679,6 @@ line instead."
 
 (require 'slime)
 
-;; (setq inferior-lisp-program "/usr/bin/sbcl")
-;; (add-to-list 'load-path "/usr/share/emacs/site-lisp/slime/")
-;; (require 'slime)
-;; (slime-setup)
-
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/slime/")
 (eval-after-load "slime"
   '(progn
      (setq slime-lisp-implementations
@@ -695,20 +691,17 @@ line instead."
                     slime-editing-commands
                     slime-fancy-inspector
                     slime-fontifying-fu
-                    slime-fuzzy
                     slime-indentation
                     slime-mdot-fu
                     slime-package-fu
                     slime-references
-                    slime-repl
                     slime-sbcl-exts
                     slime-scratch
                     slime-xref-browser
                     ))
      (slime-autodoc-mode)
      (setq slime-complete-symbol*-fancy t)
-     (setq slime-complete-symbol-function
-  'slime-fuzzy-complete-symbol)))
+     ))
 
 ;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
 
@@ -821,17 +814,6 @@ line instead."
         (matlab-shell-mode . matlab-shell-tab))) ;; see update below
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; [M]ELPA
-
-(setq package-archives '(("ELPA" . "http://tromey.com/elpa/") 
-                         ("gnu" . "http://elpa.gnu.org/packages/")
-                         ("marmalade" . "http://marmalade-repo.org/packages/")))
-
-(add-to-list 'package-archives
-'("melpa" . "http://melpa.milkbox.net/packages/") t)
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mode Line
 
 ;; http://emacs-fu.blogspot.com/2010/05/cleaning-up-mode-line.html
@@ -933,9 +915,8 @@ line instead."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; yasnippet
 
-(add-to-list 'load-path "~/.emacs.d/yasnippet")
 (require 'yasnippet)
-(setq yas/root-directory '("~/.emacs.d/yasnippet/snippets" "~/.emacs.d/snippets"))
+;; (setq yas/root-directory '("~/.emacs.d/yasnippet/snippets" "~/.emacs.d/snippets"))
 (mapc 'yas/load-directory yas/root-directory)
 (add-to-list 'hippie-expand-try-functions-list 'yas/hippie-try-expand)
 (yas/global-mode 1)
@@ -962,14 +943,6 @@ line instead."
                        (("\\.py\\'" . "Python script") . ["skeleton.py" my/autoinsert-yas-expand])
                        (("[mM]akefile\\'" . "Makefile") . ["Makefile" my/autoinsert-yas-expand])
                        (("\\.tex\\'" . "TeX/LaTeX") . ["skeleton.tex" my/autoinsert-yas-expand]))))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ace-jump-mode
-
-(add-to-list 'load-path "~/.emacs.d/ace-jump-mode")
-(require 'ace-jump-mode)
-(define-key global-map (kbd "<insert>") 'ace-jump-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; w3m

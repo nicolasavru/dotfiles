@@ -15,8 +15,7 @@
   '(apache-mode async auctex caml
                 clojure-mode color-theme dash doc-mode google-contacts
                 haskell-mode magit markdown-mode oauth2 scala-mode2 org php-mode rainbow-delimiters s
-                sauron slime slime-clj slime-fuzzy slime-repl smart-tab tuareg
-                w3m yasnippet)
+                sauron slime slime-clj smart-tab tuareg w3m yasnippet)
   "Packages which should be installed upon launch")
 
 (dolist (p required-packages)
