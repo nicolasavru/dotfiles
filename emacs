@@ -981,53 +981,6 @@ line instead."
 (global-set-key "\C-xm" 'browse-url-at-point)
 (setq w3m-use-cookies t)
 
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;; wanderlust
-
-
-;; (add-to-list 'load-path "~/.emacs.d/wanderlust/wl")
-;; (add-to-list 'load-path "~/.emacs.d/wanderlust/elmo")
-;; (add-to-list 'load-path "~/.emacs.d/wanderlust/utils")
-
-
-;; ;(add-to-list 'load-path "/usr/share/emacs/site-lisp/wl")
-;; (add-to-list 'load-path "~/.emacs.d/bbdbv3-wl/lisp")
-;; (require 'bbdbV3-wl)
-
-;; ;; ;; workaround: re-run this nonsense (pulled from bbdb.el)
-;; ;; (eval-when-compile              ; pacify the compiler.
-;; ;;   (autoload 'widget-group-match "wid-edit")
-;; ;;   (autoload 'Electric-pop-up-window "electric")
-;; ;;   (autoload 'Electric-command-loop "electric")
-;; ;;   (autoload 'bbdb-migrate "bbdb-migrate")
-;; ;;   (autoload 'bbdb-do-records "bbdb-com")
-;; ;;   (autoload 'bbdb-append-display-p "bbdb-com")
-;; ;;   (autoload 'bbdb-toggle-records-layout "bbdb-com")
-;; ;;   (autoload 'bbdb-dwim-mail "bbdb-com")
-;; ;;   (autoload 'bbdb-layout-prefix "bbdb-com")
-;; ;;   (autoload 'bbdb-completing-read-records "bbdb-com")
-;; ;;   (autoload 'bbdb-search "bbdb-com")
-;; ;;   (autoload 'bbdb-search-prompt "bbdb-com")
-;; ;;   (autoload 'mail-position-on-field "sendmail")
-;; ;;   (autoload 'vm-select-folder-buffer "vm-folder")
-
-;; ;;   ;; cannot use autoload for variables...
-;; ;;   (defvar message-mode-map) ;; message.el
-;; ;;   (defvar mail-mode-map) ;; sendmail.el
-;; ;;   (defvar gnus-article-buffer)) ;; gnus-art.el
-
-
-;; ;; (autoload 'wl "wl" "Wanderlust" t)
-;; ;; (autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
-;; ;; (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
-
-;; (global-set-key (kbd "<f7>") (lambda ()
-;;                                (interactive)
-;;                                (switch-to-buffer "Folder")))
-
-;; (wl)
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; jabber
 
@@ -1055,8 +1008,6 @@ line instead."
 (global-set-key (kbd "C-c j") (lambda ()
                                (interactive)
                                (switch-to-buffer "*-jabber-roster-*")))
-
-
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
