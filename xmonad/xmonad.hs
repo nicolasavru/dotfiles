@@ -18,21 +18,20 @@ import XMonad.Actions.PhysicalScreens
 import XMonad.Actions.UpdatePointer
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
-import XMonad.Layout.IndependentScreens
-import XMonad.Layout.ThreeColumns
-import XMonad.Util.Run
-import XMonad.Util.WorkspaceCompare
-
 import XMonad.Layout.Grid
+import XMonad.Layout.IndependentScreens
 import XMonad.Layout.MultiToggle.Instances
 import XMonad.Layout.MultiToggle
 import XMonad.Layout.Renamed
 import XMonad.Layout.Reflect
 import XMonad.Layout.Spiral
 import XMonad.Layout.Tabbed
-
+import XMonad.Layout.ThreeColumns
 import XMonad.Layout.WorkspaceDir
 import XMonad.Prompt
+import XMonad.Util.Run
+import XMonad.Util.WorkspaceCompare
+
 
 main :: IO ()
 main = do
