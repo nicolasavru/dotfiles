@@ -13,3 +13,6 @@
 [submodule "emacs.d/ASynK"]
     path = emacs.d/ASynK
     url = git://github.com/skarra/ASynK.git
+[submodule "emacs.d/offlineimap-el"]
+    path = emacs.d/offlineimap-el
+    url = git://git.naquadah.org/offlineimap-el.git

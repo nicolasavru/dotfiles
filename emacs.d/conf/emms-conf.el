@@ -14,12 +14,12 @@
 (require 'emms-streams)
 (setq emms-stream-bookmarks-file "~/.emacs.d/emms/emms-streams")
 
-(setq emms-lastfm-client-session-key-file "~/.emacs.d/emms/emms-lastfm-client-sessionkey")
-(require 'emms-lastfm-client)
+;; (setq emms-lastfm-client-session-key-file "~/.emacs.d/emms/emms-lastfm-client-sessionkey")
+;; (require 'emms-lastfm-client)
 
-;(emms-lastfm-client)
-;(emms-lastfm-scrobbler-enable)
-(emms-lastfm-scrobbler-disable)
+;; ;(emms-lastfm-client)
+;; ;(emms-lastfm-scrobbler-enable)
+;; (emms-lastfm-scrobbler-disable)
 
 (setq emms-playlist-default-major-mode 'emms-playlist-mode)
 (emms-cache-disable)
@@ -45,6 +45,8 @@
 ;(emms-default-players)
 ;(setq emms-player-list '(emms-player-mplayer-playlist emms-player-mplayer emms-player-vlc))
 (setq emms-player-list '(emms-player-mplayer emms-player-vlc))
+(add-to-list 'emms-player-mplayer-parameters "-novideo")
+;; (setq emms-player-list '(emms-player-vlc))
 ;(setq emms-player-list '(emms-player-mpg321 emms-player-ogg123 emms-player-mplayer))
 (add-to-list 'emms-player-list 'emms-player-mikmod)
 

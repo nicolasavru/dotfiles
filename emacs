@@ -204,31 +204,19 @@ line instead."
 (require 'undo-tree)
 (global-undo-tree-mode)
 
+(require 'hippie-exp)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some misc other packages
-
-;; the in-frame speedbar
- (when (require 'sr-speedbar nil 'noerror)
-;;   (setq speedbar-supported-extension-expressions
-;;     '(".org" ".[ch]\\(\\+\\+\\|pp\\|c\\|h\\|xx\\)?"
-;;        ".tex\\(i\\(nfo\\)?\\)?" ".el"
-;;        ".java" ".p[lm]" ".pm" ".py"  ".s?html"  "Make
-;;file.am" "configure.ac"))
-  (setq
-    sr-speedbar-width-x 20
-    sr-speedbar-right-side t))
-
 
 ;; multi-term
 (when (require 'multi-term nil 'noerror)
  (setq multi-term-program "/bin/zsh"))
 
-
 ;; auto-install
 (require 'auto-install)
 (setq auto-install-directory "~/.emacs.d/auto-install")
-(auto-install-update-emacswiki-package-name t)
+;;(auto-install-update-emacswiki-package-name t)
 
 ;; fullscreen
 (require 'fullscreen)
@@ -237,6 +225,9 @@ line instead."
 (global-rainbow-delimiters-mode)
 
 (require 'unbound)
+
+(require 'misc)
+(global-set-key "\M-z" 'zap-up-to-char)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -284,9 +275,6 @@ line instead."
 (global-set-key (kbd "C-c p") 'insert-debug-clause) ;; insert flagged printf
 (global-set-key (kbd "C-c r") 'delete-printfs)  ;; remove flagged printfs
 
-(when (fboundp 'sr-speedbar-toggle)
-  (global-set-key (kbd "C-<f9>") 'sr-speedbar-toggle)
-  (global-set-key (kbd "C-<f10>") 'sr-speedbar-select-window)) ; speedbar
 (global-set-key (kbd "C-c d") 'djcb-dup)
 
 (when (fboundp 'fullscreen-toggle)
@@ -368,8 +356,8 @@ line instead."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; LaTeX
 
-(load "auctex.el" nil t t)
-(load "preview-latex.el" nil t t)
+;; (load "auctex.el" nil t t)
+;; (load "preview-latex.el" nil t t)
 
 (setq TeX-auto-save t)
 (setq TeX-parse-self t)
@@ -412,7 +400,7 @@ line instead."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Org-Mode
 
-(require 'org-install)
+;(require 'org-install)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-cc" 'org-capture)
@@ -463,7 +451,7 @@ line instead."
  '(org-directory "~/Dropbox/org")
  '(org-agenda-files (quote ("~/Dropbox/org/todo.org")))
  '(org-default-notes-file "~/Dropbox/org/notes.org")
- '(org-mobile-inbox-for-pull "~/Dropbox/org/mobileorg")
+ '(org-mobile-inbox-for-pull "~/Dropbox/org/todo.org")
  '(org-agenda-ndays 7)
  '(org-deadline-warning-days 14)
  '(org-agenda-show-all-dates t)
@@ -580,7 +568,7 @@ line instead."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; EMMS
 
-(load-file "~/.emacs.d/conf/emms.el")
+(load-file "~/.emacs.d/conf/emms-conf.el")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gnuplot
@@ -601,21 +589,34 @@ line instead."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcitons
 
+;; (defadvice show-paren-function
+;;   (after show-matching-paren-offscreen activate)
+;;   "If the matching paren is offscreen, show the matching line in the
+;;     echo area. Has no effect if the character before point is not of
+;;     the syntax class ')'."
+;;   (interactive)
+;;   (let ((matching-text nil))
+;;     ;; Only call `blink-matching-open' if the character before point
+;;     ;; is a close parentheses type character. Otherwise, there's not
+;;     ;; really any point, and `blink-matching-open' would just echo
+;;     ;; "Mismatched parentheses", which gets really annoying.
+;;     (if (char-equal (char-syntax (char-before (point))) ?\))
+;;         (setq matching-text (blink-matching-open)))
+;;     (if (not (null matching-text))
+;;         (message matching-text))))
+
 (defadvice show-paren-function
   (after show-matching-paren-offscreen activate)
   "If the matching paren is offscreen, show the matching line in the
     echo area. Has no effect if the character before point is not of
     the syntax class ')'."
   (interactive)
-  (let ((matching-text nil))
-    ;; Only call `blink-matching-open' if the character before point
-    ;; is a close parentheses type character. Otherwise, there's not
-    ;; really any point, and `blink-matching-open' would just echo
-    ;; "Mismatched parentheses", which gets really annoying.
-    (if (char-equal (char-syntax (char-before (point))) ?\))
-        (setq matching-text (blink-matching-open)))
-    (if (not (null matching-text))
-        (message matching-text))))
+  (let* ((cb (char-before (point)))
+         (matching-text (and cb
+                             (char-equal (char-syntax cb) ?\) )
+                             (blink-matching-open))))
+    (when matching-text (message matching-text))))
+
 
 (defun goto-match-paren (arg)
   "Go to the matching  if on (){}[], similar to vi style of % "
@@ -813,6 +814,8 @@ line instead."
 (setq smart-tab-completion-functions-alist
       '((emacs-lisp-mode . lisp-complete-symbol)
         (text-mode . dabbrev-completion) ;; this is the "default" emacs expansion function
+;;        (mu4e-compose-mode . google-contacts-message-complete-function)
+        (mu4e-compose-mode . completion-at-point)
         (clojure-mode . slime-complete-symbol)
         (lisp-mode . slime-complete-symbol)
         (matlab-shell-mode . matlab-shell-tab))) ;; see update below
@@ -976,57 +979,59 @@ line instead."
 (setq browse-url-browser-function 'w3m-browse-url)
 (autoload 'w3m-browse-url "w3m" "Ask a WWW browser to show a URL." t)
 (global-set-key "\C-xm" 'browse-url-at-point)
+(setq w3m-use-cookies t)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; wanderlust
-
-
-(add-to-list 'load-path "~/.emacs.d/wanderlust/wl")
-(add-to-list 'load-path "~/.emacs.d/wanderlust/elmo")
-(add-to-list 'load-path "~/.emacs.d/wanderlust/utils")
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;; wanderlust
 
 
-;(add-to-list 'load-path "/usr/share/emacs/site-lisp/wl")
-(add-to-list 'load-path "~/.emacs.d/bbdbv3-wl/lisp")
-(require 'bbdbV3-wl)
-
-;; ;; workaround: re-run this nonsense (pulled from bbdb.el)
-;; (eval-when-compile              ; pacify the compiler.
-;;   (autoload 'widget-group-match "wid-edit")
-;;   (autoload 'Electric-pop-up-window "electric")
-;;   (autoload 'Electric-command-loop "electric")
-;;   (autoload 'bbdb-migrate "bbdb-migrate")
-;;   (autoload 'bbdb-do-records "bbdb-com")
-;;   (autoload 'bbdb-append-display-p "bbdb-com")
-;;   (autoload 'bbdb-toggle-records-layout "bbdb-com")
-;;   (autoload 'bbdb-dwim-mail "bbdb-com")
-;;   (autoload 'bbdb-layout-prefix "bbdb-com")
-;;   (autoload 'bbdb-completing-read-records "bbdb-com")
-;;   (autoload 'bbdb-search "bbdb-com")
-;;   (autoload 'bbdb-search-prompt "bbdb-com")
-;;   (autoload 'mail-position-on-field "sendmail")
-;;   (autoload 'vm-select-folder-buffer "vm-folder")
-
-;;   ;; cannot use autoload for variables...
-;;   (defvar message-mode-map) ;; message.el
-;;   (defvar mail-mode-map) ;; sendmail.el
-;;   (defvar gnus-article-buffer)) ;; gnus-art.el
+;; (add-to-list 'load-path "~/.emacs.d/wanderlust/wl")
+;; (add-to-list 'load-path "~/.emacs.d/wanderlust/elmo")
+;; (add-to-list 'load-path "~/.emacs.d/wanderlust/utils")
 
 
-;; (autoload 'wl "wl" "Wanderlust" t)
-;; (autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
-;; (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
+;; ;(add-to-list 'load-path "/usr/share/emacs/site-lisp/wl")
+;; (add-to-list 'load-path "~/.emacs.d/bbdbv3-wl/lisp")
+;; (require 'bbdbV3-wl)
 
-(global-set-key (kbd "<f7>") (lambda ()
-                               (interactive)
-                               (switch-to-buffer "Folder")))
+;; ;; ;; workaround: re-run this nonsense (pulled from bbdb.el)
+;; ;; (eval-when-compile              ; pacify the compiler.
+;; ;;   (autoload 'widget-group-match "wid-edit")
+;; ;;   (autoload 'Electric-pop-up-window "electric")
+;; ;;   (autoload 'Electric-command-loop "electric")
+;; ;;   (autoload 'bbdb-migrate "bbdb-migrate")
+;; ;;   (autoload 'bbdb-do-records "bbdb-com")
+;; ;;   (autoload 'bbdb-append-display-p "bbdb-com")
+;; ;;   (autoload 'bbdb-toggle-records-layout "bbdb-com")
+;; ;;   (autoload 'bbdb-dwim-mail "bbdb-com")
+;; ;;   (autoload 'bbdb-layout-prefix "bbdb-com")
+;; ;;   (autoload 'bbdb-completing-read-records "bbdb-com")
+;; ;;   (autoload 'bbdb-search "bbdb-com")
+;; ;;   (autoload 'bbdb-search-prompt "bbdb-com")
+;; ;;   (autoload 'mail-position-on-field "sendmail")
+;; ;;   (autoload 'vm-select-folder-buffer "vm-folder")
 
-(wl)
+;; ;;   ;; cannot use autoload for variables...
+;; ;;   (defvar message-mode-map) ;; message.el
+;; ;;   (defvar mail-mode-map) ;; sendmail.el
+;; ;;   (defvar gnus-article-buffer)) ;; gnus-art.el
+
+
+;; ;; (autoload 'wl "wl" "Wanderlust" t)
+;; ;; (autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
+;; ;; (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
+
+;; (global-set-key (kbd "<f7>") (lambda ()
+;;                                (interactive)
+;;                                (switch-to-buffer "Folder")))
+
+;; (wl)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; jabber
 
-(require 'jabber)
+(require 'jabber-autoloads)
 
 (setq jabber-show-resources 'always)
 (setq jabber-autoaway-method 'jabber-xprintidle-get-idle-time)
@@ -1034,11 +1039,12 @@ line instead."
 (setq jabber-chat-time-format "%H:%M:%S")
 (setq jabber-chat-delayed-time-format "%Y-%m-%d %H:%M:%S")
 (setq jabber-default-status "There is beauty in complexity, but elegance in simplicity.")
-;(setq jabber-alert-presence-hooks nil)
-(add-hook 'jabber-post-connect-hooks 'jabber-autoaway-start)
+(setq jabber-auto-reconnect t)
+;; ;(setq jabber-alert-presence-hooks nil)
+;; (add-hook 'jabber-post-connect-hooks 'jabber-autoaway-start)
 
 (jabber-connect-all)
-(jabber-mode-line-mode)
+;; (jabber-mode-line-mode)
 
 ;; don't clobber my minibuffer!
 (define-jabber-alert echo "Show a message in the echo area"
@@ -1046,6 +1052,116 @@ line instead."
     (unless (minibuffer-prompt)
       (message "%s" msg))))
 
-(global-set-key (kbd "<f6>") (lambda ()
+(global-set-key (kbd "C-c j") (lambda ()
                                (interactive)
                                (switch-to-buffer "*-jabber-roster-*")))
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; sr-speedbar
+
+(require 'sr-speedbar)
+
+;; (when (require 'sr-speedbar nil 'noerror)
+;; ;;   (setq speedbar-supported-extension-expressions
+;; ;;     '(".org" ".[ch]\\(\\+\\+\\|pp\\|c\\|h\\|xx\\)?"
+;; ;;        ".tex\\(i\\(nfo\\)?\\)?" ".el"
+;; ;;        ".java" ".p[lm]" ".pm" ".py"  ".s?html"  "Make
+;; ;;file.am" "configure.ac"))
+;;   (setq
+;;     sr-speedbar-width-x 20
+;;     sr-speedbar-right-side t))
+
+(setq speedbar-hide-button-brackets-flag t
+      speedbar-show-unknown-files t
+      speedbar-smart-directory-expand-flag t
+      speedbar-use-images nil
+      speedbar-indentation-width 2
+      speedbar-update-flag t
+      sr-speedbar-width 30
+      sr-speedbar-width-x 30
+      sr-speedbar-auto-refresh t
+      sr-speedbar-skip-other-window-p t
+      sr-speedbar-right-side nil
+      speedbar-directory-unshown-regexp "^$")
+
+(add-hook 'speedbar-reconfigure-keymaps-hook
+          '(lambda ()
+             (define-key speedbar-mode-map [S-up] 'speedbar-up-directory)
+             (define-key speedbar-mode-map [right] 'speedbar-flush-expand-line)
+             (define-key speedbar-mode-map [left] 'speedbar-contract-line)))
+
+(sr-speedbar-open)
+
+(global-set-key (kbd "C-<f9>") 'sr-speedbar-toggle)
+(global-set-key (kbd "C-<f10>") 'sr-speedbar-select-window)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ocaml
+
+(setq auto-mode-alist (cons '("\\.ml[iylp]?\\'" . tuareg-mode) auto-mode-alist))
+(autoload 'tuareg-mode "tuareg" "Major mode for editing Caml code" t)
+(autoload 'ocamldebug "ocamldebug" "Run the Caml debugger" t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; clojure
+
+(require 'clojure-mode)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; voice
+(require 'festival)
+(festival-start)
+(require 'festival-extension)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; sauron
+
+(require 'sauron)
+(global-set-key (kbd "C-c s") 'sauron-toggle-hide-show)
+
+(setq sauron-dbus-cookie t)
+
+(setq
+ sauron-max-line-length 120
+ sauron-watch-patterns '("volhv")
+ sauron-watch-nicks '("volhv"))
+
+(add-hook 'sauron-event-added-functions
+          (lambda (origin prio msg &optional props)
+            (if (string-match "ping" msg)
+                (sauron-fx-sox "/usr/share/sounds/trillian/generic-event.wav"))
+            (cond
+;             ((= prio 3) (sauron-fx-sox "/usr/share/sounds/trillian/message-inbound.wav"))
+             ((= prio 3) (sauron-fx-festival msg))
+             ((= prio 4) (sauron-fx-festival msg))
+;             ((= prio 4) (sauron-fx-sox "/usr/share/sounds/trillian/message-inbound.wav"))
+             ((= prio 5)
+              (sauron-fx-sox "/usr/share/sounds/trillian/generic-event.wav")
+              (sauron-fx-gnome-osd(format "%S: %s" origin msg) 5)))))
+
+(defun sauron-fx-festival (msg)
+  "Say MSG with festival."
+  (festival-say msg))
+
+(sauron-start)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; google-contacts
+
+;; (require 'google-contacts)
+;; (require 'google-contacts-gnus)
+;; (require 'google-contacts-message)
+;; (add-hook 'completion-at-point-functions 'google-contacts-message-complete-function)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; mu4e
+
+(load-file "~/.emacs.d/conf/mu4e-conf.el")
+
+
+
+(festival-say "emacs initialized")

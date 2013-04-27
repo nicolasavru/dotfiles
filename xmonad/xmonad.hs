@@ -19,9 +19,20 @@ import XMonad.Actions.UpdatePointer
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Layout.IndependentScreens
-import XMonad.Layout.PerWorkspace
+import XMonad.Layout.ThreeColumns
 import XMonad.Util.Run
 import XMonad.Util.WorkspaceCompare
+
+import XMonad.Layout.Grid
+import XMonad.Layout.MultiToggle.Instances
+import XMonad.Layout.MultiToggle
+import XMonad.Layout.Renamed
+import XMonad.Layout.Reflect
+import XMonad.Layout.Spiral
+import XMonad.Layout.Tabbed
+
+import XMonad.Layout.WorkspaceDir
+import XMonad.Prompt
 
 main :: IO ()
 main = do
@@ -29,11 +40,14 @@ main = do
   xmproc <- spawnPipe "/usr/bin/xmobar ~/.xmobarrc"
   xmonad $ defaultConfig
     { manageHook = manageDocks <+> manageHook defaultConfig,
-      layoutHook = avoidStruts  $  layoutHook defaultConfig,
+      -- layoutHook = avoidStruts  $  layoutHook defaultConfig,
+      layoutHook = myLayouts,
       logHook = dynamicLogWithPP xmobarPP
                   { ppOutput = hPutStrLn xmproc,
-                    ppTitle = xmobarColor "green" "" . shorten 50,
-                    ppSort = getSortByTag
+                    ppTitle = xmobarColor "green" "",
+                    ppLayout = xmobarColor "orange" "",
+                    ppSort = getSortByTag,
+                    ppHidden = const ""
                   } >> updatePointer (TowardsCentre 0.2 0.2),
       modMask = mod4Mask,
       terminal = "urxvtc",
@@ -45,12 +59,40 @@ main = do
       keys = \c -> myKeys c `M.union` keys defaultConfig c
     }
 
-myWorkspaces = withScreens 4 [ "1", "2", "3", "4", "5", "6", "7", "8", "9" ]
+myWorkspaces = withScreens 4 [ "`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "<-"]
+
+myLayouts = avoidStruts $
+            workspaceDir "~" $
+            mkToggle (REFLECTX ?? REFLECTY ?? MIRROR ?? TABBED ?? FULL ?? EOT) $
+            Tall 1 (3/1000) (1/2) |||
+            ThreeCol 1 (3/100) (1/2) |||
+            renamed [Replace "ThreeColMid"] (ThreeColMid 1 (3/100) (1/2)) |||
+            Grid ||| spiral (6/7)
+
+myTabConfig = defaultTheme { inactiveBorderColor = "#ff0000",
+                             activeBorderColor = "#0088ff",
+                             activeColor = "#000000",
+                             inactiveColor = "#000000",
+                             decoHeight = 18
+                           }
+
+data TABBED = TABBED deriving (Read, Show, Eq, Typeable)
+instance Transformer TABBED Window where
+  transform _ x k = k (tabbed shrinkText myTabConfig) (const x)
+
 
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $ [
-    ] ++
-    [ ((m .|. modm, k), windows $ onCurrentScreen f i)
-         | (i, k) <- zip (workspaces' conf) [xK_1 .. xK_9]
+  ((modm,               xK_t), sendMessage $ Toggle MIRROR),
+  ((modm,               xK_f), sendMessage $ Toggle TABBED),
+  ((modm .|. shiftMask, xK_f), sendMessage $ Toggle FULL),
+  ((modm,               xK_x), sendMessage $ Toggle REFLECTX),
+  ((modm,               xK_y), sendMessage $ Toggle REFLECTY),
+  ((modm .|. shiftMask, xK_t), withFocused $ windows . W.sink),
+  ((modm,               xK_z), changeDir defaultXPConfig),
+  ((modm,               xK_q), spawn "pkill trayer; xmonad --recompile && xmonad --restart")
+  ] ++
+    [((m .|. modm, k), windows $ onCurrentScreen f i)
+         | (i, k) <- zip (workspaces' conf) [xK_grave, xK_1, xK_2, xK_3, xK_4, xK_5, xK_6, xK_7, xK_8, xK_9, xK_0, xK_minus, xK_equal, xK_BackSpace]
          , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
     ++
     [((modm .|. mask, key), f sc)

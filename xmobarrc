@@ -12,5 +12,5 @@ Config { font = "-misc-dejavu sans mono-medium-r-normal-*-10-120-100-100-m-0-iso
                    , Run Kbd [("ru", "RU"), ("us", "US")]
                    , Run StdinReader
                    ]
-                   , template = "%StdinReader% }{ %multicpu% | %coretemp%  | %memory% | %swap% | %eth0% | %kbd% | <fc=#ee9a00>%date%</fc>"
+                   , template = "%StdinReader% }{ %multicpu% | %coretemp% | %memory% | %swap% | %eth0% | %kbd% | <fc=#ee9a00>%date%</fc>"
       }
