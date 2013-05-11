@@ -8,6 +8,7 @@
      "multirow"
      "mathtools"
      "amsmath"
+     "amssymb"
      "graphicx"
      "enumerate"
      "babel"
