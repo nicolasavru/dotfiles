@@ -74,6 +74,7 @@
   mu4e-update-interval 300)
 
 (setq mu4e-view-show-addresses t)
+(setq mu4e-compose-dont-reply-to-self t)
 
 ;; enable inline images
 (setq mu4e-view-show-images t)
@@ -96,7 +97,7 @@
                                 "maildir:/Cooper/CUCC/ticket-user@cooper.edu")
       ulab-label-search "maildir:/Cooper/uLab OR maildir:/Cooper/uLab/archivist1 OR maildir:/Cooper/uLab/Trac OR maildir:/Cooper/uLab/ulab.cu@gmail.com OR maildir:/Cooper/uLab/zenoss@ee.cooper.edu"
       classes-label-search "maildir:/Cooper/Classes/ECE101 OR maildir:/Cooper/Classes/ECE111-ECE110 OR maildir:/Cooper/Classes/ECE114 OR maildir:/Cooper/Classes/ECE302 OR maildir:/Cooper/Classes/ECE416 OR maildir:/Cooper/Classes/ECE418 OR maildir:/Cooper/Classes/ECE460"
-      cooper-misc-label-search "maildir:/Cooper/cunerds OR maildir:\"/Cooper/Alumni NewsLetter\" OR maildir:/Cooper/bulkmail OR maildir:/Cooper/campus-notice OR maildir:/Cooper/Newsletter OR maildir:/Cooper/moodle")
+      cooper-misc-label-search "maildir:/Cooper/cunerds OR maildir:\"/Cooper/Alumni_NewsLetter\" OR maildir:/Cooper/bulkmail OR maildir:/Cooper/campus-notice OR maildir:/Cooper/Newsletter OR maildir:/Cooper/moodle")
 
 
 (add-to-list 'mu4e-bookmarks
@@ -104,7 +105,7 @@
 (add-to-list 'mu4e-bookmarks
              (list ulab-label-search "uLab" ?U))
 (add-to-list 'mu4e-bookmarks
-             (list (concat "flag:unread AND NOT flag:trashed AND (maildir:/INBOX OR maildir:/SMS OR maildir:\"/Buzsaki Lab\" OR maildir:/StuyCS OR maildir:/Unigroup OR " cucc-label-search " OR "ulab-label-search " OR " classes-label-search " OR "cooper-misc-label-search ")") "Unread - Important" ?I))
+             (list (concat "flag:unread AND NOT flag:trashed AND (maildir:/INBOX OR maildir:/SMS OR maildir:\"/Buzsaki_Lab\" OR maildir:/StuyCS OR maildir:/Unigroup OR " cucc-label-search " OR "ulab-label-search " OR " classes-label-search " OR "cooper-misc-label-search ")") "Unread - Important" ?I))
 
 
 
