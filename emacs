@@ -164,6 +164,7 @@ line instead."
   max-mini-window-height 5
   minibuffer-scroll-window nil
   resize-mini-windows t)
+(minibuffer-depth-indicate-mode t)
 
 (icomplete-mode t)                       ;; completion in minibuffer
 (setq
@@ -317,7 +318,7 @@ line instead."
     (let ((w (length (number-to-string (count-lines (point-min) (point-max))))))
       (setq linum-format
             `(lambda (line)
-7               (propertize (concat
+               (propertize (concat
                             (truncate-string-to-width
                              "" (- ,w (length (number-to-string line)))
                              nil ?\x2007)
@@ -705,8 +706,12 @@ line instead."
 
 ;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
 
+(setq common-lisp-hyperspec-root "/usr/share/doc/HyperSpec/")
+
 (global-set-key (kbd "<f5>") 'hyperspec-lookup)
 
+(load (expand-file-name "~/quicklisp/slime-helper.el"))
+(setq inferior-lisp-program "sbcl")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ERC
@@ -952,6 +957,16 @@ line instead."
 (setq browse-url-browser-function 'w3m-browse-url)
 (autoload 'w3m-browse-url "w3m" "Ask a WWW browser to show a URL." t)
 (global-set-key "\C-xm" 'browse-url-at-point)
+(defun w3m-mode-options ()
+  (local-set-key (kbd "<left>") 'backward-char)
+  (local-set-key (kbd "<right>") 'forward-char)
+  (local-set-key (kbd "<up>") 'previous-line)
+  (local-set-key (kbd "<down>") 'next-line)
+  (local-set-key (kbd "M-<left>") 'w3m-view-previous-page)
+  (local-set-key (kbd "M-<right>") 'w3m-view-next-page)
+  (local-set-key (kbd "C-<tab>") 'w3m-next-buffer)
+  (local-set-key (kbd "q") 'bury-buffer))
+(add-hook 'w3m-mode-hook 'w3m-mode-options)
 (setq w3m-use-cookies t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

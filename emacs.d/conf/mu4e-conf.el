@@ -54,8 +54,8 @@
 
 ;; alternatively, for emacs-24 you can use:
 
-(require 'smtpmail-async)
-(setq message-send-mail-function 'async-smtpmail-send-it
+;; (require 'smtpmail-async)
+(setq message-send-mail-function 'smtpmail-send-it
       smtpmail-stream-type 'starttls
       smtpmail-default-smtp-server "smtp.gmail.com"
       smtpmail-smtp-server "smtp.gmail.com"
