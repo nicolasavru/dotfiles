@@ -28,7 +28,7 @@
 (setq
   user-mail-address "nicolasavru@gmail.com"
   user-full-name  "Nicolas Avrutin"
-  message-signature
+  mu4e-compose-signature
   (concat
     "Nicolas Avrutin"
     "\n"))

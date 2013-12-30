@@ -1,8 +1,8 @@
-[submodule "emacs.d/fixed-point-completion"]
-    path = emacs.d/fixed-point-completion
+[submodule "emacs.d/lisp/fixed-point-completion"]
+    path = emacs.d/lisp/fixed-point-completion
     url = git://github.com/smithzvk/fixed-point-completion.git
-[submodule "emacs.d/e-sink"]
-    path = emacs.d/e-sink
+[submodule "emacs.d/lisp/e-sink"]
+    path = emacs.d/lisp/e-sink
     url = git://github.com/lewang/e-sink.git
 [submodule "emacs.d/snippets/latex-mode/yasnippets-latex"]
     path = emacs.d/snippets/latex-mode/yasnippets-latex
@@ -10,6 +10,6 @@
 [submodule "emacs.d/ASynK"]
     path = emacs.d/ASynK
     url = git://github.com/skarra/ASynK.git
-[submodule "emacs.d/offlineimap-el"]
-    path = emacs.d/offlineimap-el
+[submodule "emacs.d/lisp/offlineimap-el"]
+    path = emacs.d/lisp/offlineimap-el
     url = git://git.naquadah.org/offlineimap-el.git

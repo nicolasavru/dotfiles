@@ -1,11 +1,11 @@
-emacs.d/conf/private.el
+emacs.d/lisp/conf/private.el
+emacs.d/lisp/custom-lisp/*
+emacs.d/lisp/elpa/*
 emacs.d/url/*
-emacs.d/custom-lisp/*
 emacs.d/auto-save-list/*
 emacs.d/cache/*
 emacs.d/tramp
 emacs.d/emms/*
-emacs.d/elpa/*
 emacs.d/.org-id-locations
 emacs.d/bookmarks
 emacs.d/abbrev_defs

@@ -1,6 +1,6 @@
 ;(setq load-path (cons "~/.emacs.d" load-path))
 (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
-    (let* ((my-lisp-dir "~/.emacs.d/")
+    (let* ((my-lisp-dir "~/.emacs.d/lisp/")
            (default-directory my-lisp-dir))
       (setq load-path (cons my-lisp-dir load-path))
       (normal-top-level-add-subdirs-to-load-path)))
@@ -16,26 +16,27 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; packages
 
-(load-file "~/.emacs.d/conf/packages.el")
+(setq package-user-dir "~/.emacs.d/lisp/elpa")
+(load-file "~/.emacs.d/lisp/conf/packages.el")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; custom lisp
 ;; emacs or package lisp files which I have modified
 ;; (possibly awaiting patch acceptance)
 
-(load-file "~/.emacs.d/custom-lisp/emms-lastfm-scrobbler.el")
-(load-file "~/.emacs.d/custom-lisp/emms-get-lyrics.el")
+(load-file "~/.emacs.d/lisp/custom-lisp/emms-lastfm-scrobbler.el")
+(load-file "~/.emacs.d/lisp/custom-lisp/emms-get-lyrics.el")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; private
 ;; passwords and the such
 
-(load-file "~/.emacs.d/conf/private.el")
+(load-file "~/.emacs.d/lisp/conf/private.el")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc functions
 
-(load-file "~/.emacs.d/conf/misc_funcs.el")
+(load-file "~/.emacs.d/lisp/conf/misc_funcs.el")
 
 ;http://www.djcbsoftware.nl/dot-emacs.html
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -221,7 +222,7 @@ line instead."
 
 ;; auto-install
 (require 'auto-install)
-(setq auto-install-directory "~/.emacs.d/auto-install")
+(setq auto-install-directory "~/.emacs.d/lisp/auto-install")
 ;;(auto-install-update-emacswiki-package-name t)
 
 ;; fullscreen
@@ -571,7 +572,7 @@ line instead."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; EMMS
 
-(load-file "~/.emacs.d/conf/emms-conf.el")
+(load-file "~/.emacs.d/lisp/conf/emms-conf.el")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gnuplot
@@ -716,7 +717,7 @@ line instead."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ERC
 
-(load-file "~/.emacs.d/conf/erc_conf.el")
+(load-file "~/.emacs.d/lisp/conf/erc_conf.el")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; themes
@@ -728,7 +729,7 @@ line instead."
 ;; (require 'color-theme)
 ;; (color-theme-initialize)
 
-(setq custom-theme-directory "~/.emacs.d/themes")
+(setq custom-theme-directory "~/.emacs.d/lisp/themes")
 
 
 ;http://emacs-fu.blogspot.com/2009/03/color-theming.html
@@ -737,7 +738,7 @@ line instead."
   (let ((color-theme-is-global nil))
     (select-frame frame)
     (if (window-system frame)
-        (load-file "~/.emacs.d/themes/nicolasavru-dark-theme.el")
+        (load-file "~/.emacs.d/lisp/themes/nicolasavru-dark-theme.el")
       (custom-set-faces '(whitespace-space ((((class color) (background light)) (:foreground "aquamarine3"))))))))
 
 ;; hook on after-make-frame-functions
@@ -746,7 +747,7 @@ line instead."
 ;; default start
 (let ((color-theme-is-global nil))
   (if (window-system)
-      (load-file "~/.emacs.d/themes/nicolasavru-dark-theme.el")
+      (load-file "~/.emacs.d/lisp/themes/nicolasavru-dark-theme.el")
     (custom-set-faces '(whitespace-space ((((class color) (background light)) (:foreground "aquamarine3")))))))
 
 
@@ -760,7 +761,7 @@ line instead."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Window/Frame Manager
 
-(load-file "~/.emacs.d/conf/three-windows.el")
+(load-file "~/.emacs.d/lisp/conf/three-windows.el")
 (require 'transpose-frame)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -804,7 +805,6 @@ line instead."
 ;; smart tab
 
 ; http://joost.zeekat.nl/2010/06/03/slime-hints-3-interactive-completions-and-smart-tabs/
-(add-to-list 'load-path "~/.emacs.d/smart-tab")
 (require 'smart-tab) ;; make sure smart-tab.el is reachable in your load-path first
 (setq smart-tab-using-hippie-expand t)
 (global-smart-tab-mode 1) ;; switch on smart-tab everywhere
@@ -901,19 +901,19 @@ line instead."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; fixed point completion
 
-(load "~/.emacs.d/fixed-point-completion/fixed-point-completion.el")
+(load "~/.emacs.d/lisp/fixed-point-completion/fixed-point-completion.el")
 (enable-fixed-point-completions)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; e-sink
 
-(load "~/.emacs.d/e-sink/e-sink.el")
+(load "~/.emacs.d/lisp/e-sink/e-sink.el")
 (require 'e-sink)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; matlab
 
-(add-to-list 'load-path "~/.emacs.d/matlab-emacs")
+;; (add-to-list 'load-path "~/.emacs.d/matlab-emacs")
 (load-library "matlab-load")
 (add-to-list 'auto-mode-alist '("\\.m$" . matlab-mode))4
 
@@ -1099,7 +1099,7 @@ line instead."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; mu4e
 
-(load-file "~/.emacs.d/conf/mu4e-conf.el")
+(load-file "~/.emacs.d/lisp/conf/mu4e-conf.el")
 
 
 
