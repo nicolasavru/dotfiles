@@ -49,7 +49,7 @@ main = do
                   , ppHidden = const ""
                   } >> updatePointer (TowardsCentre 0.2 0.2)
     , modMask = mod4Mask
-    , terminal = "SHELL=/usr/bin/fish urxvtc"
+    , terminal = "urxvtc"
     , focusFollowsMouse = True
     , borderWidth = 1
     , normalBorderColor = "#ff0000"

@@ -1,0 +1,160 @@
+# 60_prompt
+
+# functions taken from: http://www.wunjo.org/zsh-git
+# PROMPT and RPROMPT modified
+
+coloratom() {
+  local off=$1 atom=$2
+  if [[ $atom[1] == [[:upper:]] ]]; then
+    off=$(( $off + 60 ))
+  fi
+  echo $(( $off + $colorcode[${(L)atom}] ))
+}
+
+colorword() {
+  local fg=$1 bg=$2 att=$3
+  local -a s
+
+  if [ -n "$fg" ]; then
+    s+=$(coloratom 30 $fg)
+  fi
+  if [ -n "$bg" ]; then
+    s+=$(coloratom 40 $bg)
+  fi
+  if [ -n "$att" ]; then
+    s+=$attcode[$att]
+  fi
+
+  echo "%{"$'\e['${(j:;:)s}m"%}"
+}
+
+prompt_wunjo_setup() {
+  local verbose
+  if [[ $TERM == screen* ]] && [ -n "$STY" ]; then
+    verbose=
+  else
+    verbose=1
+  fi
+
+  typeset -A colorcode
+  colorcode[black]=0
+  colorcode[red]=1
+  colorcode[green]=2
+  colorcode[yellow]=3
+  colorcode[blue]=4
+  colorcode[magenta]=5
+  colorcode[cyan]=6
+  colorcode[white]=7
+  colorcode[default]=9
+  colorcode[k]=$colorcode[black]
+  colorcode[r]=$colorcode[red]
+  colorcode[g]=$colorcode[green]
+  colorcode[y]=$colorcode[yellow]
+  colorcode[b]=$colorcode[blue]
+  colorcode[m]=$colorcode[magenta]
+  colorcode[c]=$colorcode[cyan]
+  colorcode[w]=$colorcode[white]
+  colorcode[.]=$colorcode[default]
+
+  typeset -A attcode
+  attcode[none]=00
+  attcode[bold]=01
+  attcode[faint]=02
+  attcode[standout]=03
+  attcode[underline]=04
+  attcode[blink]=05
+  attcode[reverse]=07
+  attcode[conceal]=08
+  attcode[normal]=22
+  attcode[no-standout]=23
+  attcode[no-underline]=24
+  attcode[no-blink]=25
+  attcode[no-reverse]=27
+  attcode[no-conceal]=28
+
+  local -A pc
+  pc[default]='default'
+  pc[date]='cyan'
+  pc[time]='Blue'
+  pc[host]='magenta'
+  pc[super_user]='Red'
+  pc[user]='magenta'
+  pc[punc]='yellow'
+  pc[line]='magenta'
+  pc[hist]='green'
+  pc[path]='Cyan'
+  pc[shortpath]='default'
+  pc[rc]='red'
+  pc[scm_branch]='Red'
+  pc[scm_commitid]='green'
+  pc[scm_status_dirty]='Red'
+  pc[scm_status_staged]='Green'
+  pc[#]='Yellow'
+  for cn in ${(k)pc}; do
+    pc[${cn}]=$(colorword $pc[$cn])
+  done
+  pc[reset]=$(colorword . . 00)
+
+
+  typeset -Ag wunjo_prompt_colors
+  wunjo_prompt_colors=(${(kv)pc})
+
+  #Color table from: http://www.understudy.net/custom.html
+  fg_black=$'%{\e[0;30m%}'
+  fg_red=$'%{\e[0;31m%}'
+  fg_green=$'%{\e[0;32m%}'
+  fg_brown=$'%{\e[0;33m%}'
+  fg_blue=$'%{\e[0;34m%}'
+  fg_purple=$'%{\e[0;35m%}'
+  fg_cyan=$'%{\e[0;36m%}'
+  fg_lgray=$'%{\e[0;37m%}'
+  fg_dgray=$'%{\e[1;30m%}'
+  fg_lred=$'%{\e[1;31m%}'
+  fg_lgreen=$'%{\e[1;32m%}'
+  fg_yellow=$'%{\e[1;33m%}'
+  fg_lblue=$'%{\e[1;34m%}'
+  fg_pink=$'%{\e[1;35m%}'
+  fg_lcyan=$'%{\e[1;36m%}'
+  fg_white=$'%{\e[1;37m%}'
+  #Text Background Colors
+  bg_red=$'%{\e[0;41m%}'
+  bg_green=$'%{\e[0;42m%}'
+  bg_brown=$'%{\e[0;43m%}'
+  bg_blue=$'%{\e[0;44m%}'
+  bg_purple=$'%{\e[0;45m%}'
+  bg_cyan=$'%{\e[0;46m%}'
+  bg_gray=$'%{\e[0;47m%}'
+  #Attributes
+  at_normal=$'%{\e[0m%}'
+  at_bold=$'%{\e[1m%}'
+  at_italics=$'%{\e[3m%}'
+  at_underl=$'%{\e[4m%}'
+  at_boldoff=$'%{\e[22m%}'
+  at_italicsoff=$'%{\e[23m%}'
+  at_underloff=$'%{\e[24m%}'
+
+  user="${fg_cyan}%n$pc[reset]"
+  super_user="$pc[super_user]%n$pc[reset]"
+
+  PROMPT=
+  PROMPT+="["
+  PROMPT+="${fg_purple}%*$pc[reset]"
+  PROMPT+="]"
+  PROMPT+="["
+  PROMPT+="%(!.$super_user.$user)"
+  PROMPT+="@"
+  PROMPT+="${fg_lgray}%m$pc[reset]"
+  PROMPT+=":"
+  PROMPT+="${fg_brown}%~$pc[reset]"
+
+  PROMPT+="]"
+  PROMPT+="%(!.#.$) "
+
+  RPROMPT=
+  RPROMPT+=$'%(0?::%{\e[1;41;33m%} %? %{\e[0m%}) '
+
+  export PROMPT RPROMPT
+  precmd_functions+='prompt_wunjo_precmd'
+}
+
+prompt_wunjo_setup

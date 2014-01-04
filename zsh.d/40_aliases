@@ -1,0 +1,21 @@
+## 40_aliases
+
+# lists
+alias ls="ls --color=auto -Fh"
+alias l="ls -Al"
+alias ll="ls -al"
+alias less="less -R"
+
+# convert from UPPER to lower (or back)
+alias UP2low='for i in *(.); mv $i ${i:l}'
+alias low2UP='for i in *(.); mv $i ${i:u}'
+
+
+alias em="emacsclient -c"
+alias es="e-sink.pl"
+alias E="SUDO_EDITOR=\"emacsclient -c -a emacs\" sudoedit"
+
+alias xprop_name='xprop | grep --color=none "WM_WINDOW_ROLE\|WM_CLASS" | xmessage -file -'
+
+# quick&dirty mirror
+alias mirror="noglob wget --mirror --no-parent --recursive --timestamping --continue --recursive $1"
