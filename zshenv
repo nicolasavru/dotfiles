@@ -12,14 +12,10 @@
 #
 # Global Order: zshenv, zprofile, zshrc, zlogin
 
-# Paths
-PATH="/bin:/usr/bin:/usr/local/bin:/usr/games:/opt/bin"
+source /etc/profile
 
 export PATH=/home/avru/bin:/home/avru/scripts:$PATH
 export PATH=/opt/MATLAB/R2013a/bin:$PATH
-
-# Classical environment
-source /etc/profile
 
 export BROWSER="firefox-nightly"
 export EDITOR="emacsclient_launcher.sh"
