@@ -765,12 +765,26 @@ line instead."
 (require 'transpose-frame)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; magit
+;; git
 
 (require 'magit)
-
 (autoload 'magit-status "magit" nil t)
 (global-set-key "\C-xg" 'magit-status)
+
+(require 'git-gutter-fringe)
+(global-git-gutter-mode 1)
+(add-hook 'ruby-mode-hook 'git-gutter-mode)
+(setq git-gutter:verbosity 2) ; don't be that chatty
+
+(global-set-key (kbd "C-x C-g") 'git-gutter:toggle)
+(global-set-key (kbd "C-x v =") 'git-gutter:popup-diff)
+;; Jump to next/previous hunk
+(global-set-key (kbd "C-x p") 'git-gutter:previous-hunk)
+(global-set-key (kbd "C-x n") 'git-gutter:next-hunk)
+;; Stage current hunk
+(global-set-key (kbd "C-x v s") 'git-gutter:stage-hunk)
+;; Revert current hunk
+(global-set-key (kbd "C-x v r") 'git-gutter:revert-hunk)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1101,6 +1115,10 @@ line instead."
 
 (load-file "~/.emacs.d/lisp/conf/mu4e-conf.el")
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; cscope
+
+(require 'xcscope)
 
 
 (festival-say "emacs initialized")
