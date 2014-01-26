@@ -349,6 +349,12 @@ line instead."
 (setq c-basic-offset 4)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; CUDA
+
+(setq auto-mode-alist (append '(("/*.\.cu$" . c++-mode)) auto-mode-alist))
+(setq cscope-indexer-suffixes (cons "*.cu" cscope-indexer-suffixes))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Haskell
 
 (require 'haskell-mode)
@@ -634,6 +640,7 @@ line instead."
         (t nil)))
 
 (global-set-key (kbd "<3270_PA1>") 'goto-match-paren)
+(global-set-key (kbd "C-<menu>") 'goto-match-paren)
 
 (defun joc-enlarge-by-ten()
   "enlarges a window 10 lines"
