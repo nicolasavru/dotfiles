@@ -13,3 +13,9 @@
 [submodule "emacs.d/lisp/offlineimap-el"]
     path = emacs.d/lisp/offlineimap-el
     url = git://git.naquadah.org/offlineimap-el.git
+[submodule "emacs.d/lisp/emms-player-mpv"]
+	path = emacs.d/lisp/emms-player-mpv
+	url = https://github.com/dochang/emms-player-mpv.git
+[submodule "emacs.d/lisp/cedet"]
+	path = emacs.d/lisp/cedet
+	url = http://git.randomsample.de/cedet.git

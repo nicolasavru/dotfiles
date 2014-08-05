@@ -36,7 +36,7 @@ import XMonad.Util.WorkspaceCompare
 main :: IO ()
 main = do
   trayerProc <- spawnPipe "trayer --edge top --align right --SetDockType true --SetPartialStrut true --widthtype percent --width 10 --heighttype pixel --height 18 --transparent true --alpha 1000 --tint 0x000000 --padding 0"
-  xmproc <- spawnPipe "/usr/bin/xmobar ~/.xmobarrc"
+  xmproc <- spawnPipe "/usr/bin/xmobar -x 0 ~/.xmobarrc"
   xmonad $ defaultConfig
     { manageHook = myManageHook <+> manageHook defaultConfig
     -- , layoutHook = avoidStruts  $  layoutHook defaultConfig

@@ -8,16 +8,220 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;·keysyms
 
-(define-key input-decode-map "\e\eOA" [(meta up)])
-(define-key input-decode-map "\e\eOB" [(meta down)])
-(define-key input-decode-map "\e\eOC" [(meta right)])
-(define-key input-decode-map "\e\eOD" [(meta left)])
+;; http://stackoverflow.com/questions/10867199/emacs-in-terminal-meta-arrow-keybindings
+(add-hook 'tty-setup-hook
+          '(lambda ()
+             (define-key input-decode-map "\e\e[A" [(meta up)])
+             (define-key input-decode-map "\e\e[B" [(meta down)])
+             (define-key input-decode-map "\e\e[C" [(meta right)])
+             (define-key input-decode-map "\e\e[D" [(meta left)])))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; CEDET
+
+;; ;; Load CEDET.
+;; ;; See cedet/common/cedet.info for configuration details.
+;; (load-file "~/.emacs.d/cedet-1.0pre7/common/cedet.el")
+;;(add-to-list 'load-path "/usr/share/emacs/site-lisp/cedet")
+
+;; ;; Enable EDE (Project Management) features
+;;(global-ede-mode 1)
+
+;; ;; Enable EDE for a pre-existing C++ project
+;; ;; (ede-cpp-root-project "NAME" :file "~/myproject/Makefile")
+
+;; ;; Enabling Semantic (code-parsing, smart completion) features
+;; ;; Select one of the following:
+
+;; ;; * This enables the database and idle reparse engines
+;; (semantic-load-enable-minimum-features)
+
+;; ;; * This enables some tools useful for coding, such as summary mode
+;; ;;   imenu support, and the semantic navigator
+;;(semantic-load-enable-code-helpers)
+
+;; ;; * This enables even more coding tools such as intellisense mode
+;; ;;   decoration mode, and stickyfunc mode (plus regular code helpers)
+;;  (semantic-load-enable-gaudy-code-helpers)
+
+;; ;; * This enables the use of Exuberent ctags if you have it installed.
+;; ;;   If you use C++ templates or boost, you should NOT enable it.
+;; ;; (semantic-load-enable-all-exuberent-ctags-support)
+;; ;;   Or, use one of these two types of support.
+;; ;;   Add support for new languges only via ctags.
+;; ;; (semantic-load-enable-primary-exuberent-ctags-support)
+;; ;;   Add support for using ctags as a backup parser.
+;; ;; (semantic-load-enable-secondary-exuberent-ctags-support)
+
+;; ;; Enable SRecode (Template management) minor-mode.
+;; ;; (global-srecode-minor-mode 1)
+;;(require 'semantic/sb)
+;;(require 'semantic-gcc)
+
+;; http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html
+(load-file "~/.emacs.d/lisp/cedet/cedet-devel-load.el")
+(load-file "~/.emacs.d/lisp/cedet/contrib/cedet-contrib-load.el")
+
+;; Semantic
+(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
+(add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode)
+(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode)
+;; (add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode)
+(add-to-list 'semantic-default-submodes 'global-semantic-decoration-mode)
+(add-to-list 'semantic-default-submodes 'global-semantic-highlight-func-mode)
+(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
+(add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode)
+;; (add-to-list 'semantic-default-submodes 'global-cedet-m3-minor-mode)
+(add-to-list 'semantic-default-submodes 'global-semantic-idle-local-symbol-highlight-mode)
+;;(add-to-list 'semantic-default-submodes 'global-semantic-highlight-edits-mode)
+;;(add-to-list 'semantic-default-submodes 'global-semantic-show-unmatched-syntax-mode)
+;;(add-to-list 'semantic-default-submodes 'global-semantic-show-parser-state-mode)
+
+(setq semanticdb-default-save-directory (expand-file-name "~/.emacs.d/semanticdb"))
+(setq semanticdb-default-system-save-directory (expand-file-name "~/.emacs.d/semanticdb"))
+
+(semantic-mode 1)
+(global-semantic-idle-breadcrumbs-mode t)
+
+(require 'semantic/ia)
+(require 'semantic/bovine/gcc)
+
+
+;; To add some directory to list of system include paths, you can
+;; use the semantic-add-system-include command — it accepts two
+;; parameters: string with path to include files, and symbol,
+;; representing name of major mode, for which this path will be
+;; used. For example, to add Boost header files for C++ mode, you
+;; need to add following code:
+
+;; (semantic-add-system-include "~/exp/include/boost_1_37" 'c++-mode)
+
+
+;; http://sourceforge.net/p/cedet/mailman/message/27414242/
+(defvar semantic-tags-location-ring (make-ring 20))
+
+(defun semantic-goto-definition (point)
+  "Goto definition using semantic-ia-fast-jump
+save the pointer marker if tag is found"
+  (interactive "d")
+  (condition-case err
+      (progn
+        (ring-insert semantic-tags-location-ring (point-marker))
+        (semantic-ia-fast-jump point))
+    (error
+     ;;if not found remove the tag saved in the ring
+     (set-marker (ring-remove semantic-tags-location-ring 0) nil nil)
+     (signal (car err) (cdr err)))))
+
+(defun semantic-pop-tag-mark ()
+  "popup the tag save by semantic-goto-definition"
+  (interactive)
+  (if (ring-empty-p semantic-tags-location-ring)
+      (message "%s" "No more tags available")
+    (let* ((marker (ring-remove semantic-tags-location-ring 0))
+              (buff (marker-buffer marker))
+                 (pos (marker-position marker)))
+      (if (not buff)
+            (message "Buffer has been deleted")
+        (switch-to-buffer buff)
+        (goto-char pos))
+      (set-marker marker nil nil))))
+
+(defun my-cedet-hook ()
+  (local-set-key [(control return)] 'semantic-ia-complete-symbol-menu)
+  ;; (local-set-key "\C-c?" 'semantic-ia-complete-symbol)
+  ;; (local-set-key "\C-c>" 'semantic-complete-analyze-inline)
+  ;; (local-set-key "\C-c=" 'semantic-decoration-include-visit)
+  (local-set-key "\C-c j" 'semantic-goto-definition)
+  (local-set-key "\C-c J" 'semantic-pop-tag-mark)
+  (local-set-key "\C-c q" 'semantic-ia-show-doc)
+  (local-set-key "\C-c s" 'semantic-ia-show-summary)
+  (local-set-key "\C-c p" 'semantic-analyze-proto-impl-toggle)
+  (local-set-key "\C-c f" 'senator-fold-tag-toggle)
+  (local-set-key "\C-c \C-p" 'senator-previous-tag)
+  (local-set-key "\C-c \C-n" 'senator-next-tag)
+
+  (setq ac-sources (append '(ac-source-semantic ac-source-yasnippet) ac-sources))
+  )
+
+(add-hook 'c-mode-common-hook 'my-cedet-hook)
+(add-hook 'lisp-mode-hook 'my-cedet-hook)
+(add-hook 'emacs-lisp-mode-hook 'my-cedet-hook)
+(add-hook 'python-mode-hook 'my-cedet-hook)
+
+(defun my-c-mode-cedet-hook ()
+  ;; (local-set-key "." 'semantic-complete-self-insert)
+  ;; (local-set-key ">" 'semantic-complete-self-insert)
+  (local-set-key "\C-c h" 'eassist-switch-h-cpp)
+  (local-set-key "\C-c m" 'eassist-list-methods)
+  (local-set-key "\C-c \C-r" 'semantic-symref)
+
+  (add-to-list 'ac-sources 'ac-source-gtags)
+  (add-to-list 'ac-omni-completion-sources
+               (cons "\\." '(ac-source-semantic)))
+  )
+(add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
+
+
+;; Autocomplete
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories
+             (expand-file-name "~/.emacs.d/lisp/elpa/auto-complete-20140322.32/dict"))
+(setq ac-comphist-file (expand-file-name
+                        "~/.emacs.d/ac-comphist.dat"))
+;; (global-auto-complete-mode t)
+
+;; (ac-config-default)
+;; (add-hook 'c++-mode-hook
+;;           '(lambda ()
+;;              ;; ac-omni-completion-sources is made buffer local so
+;;              ;; you need to add it to a mode hook to activate on 
+;;              ;; whatever buffer you want to use it with.  This
+;;              ;; example uses C mode (as you probably surmised).
+
+;;              ;; auto-complete.el expects ac-omni-completion-sources to be
+;;              ;; a list of cons cells where each cell's car is a regex
+;;              ;; that describes the syntactical bits you want AutoComplete
+;;              ;; to be aware of. The cdr of each cell is the source that will
+;;              ;; supply the completion data.  The following tells autocomplete
+;;              ;; to begin completion when you type in a . or a ->
+
+;;              (add-to-list 'ac-omni-completion-sources
+;;                           (cons "\\." '(ac-source-semantic)))
+;;              (add-to-list 'ac-omni-completion-sources
+;;                           (cons "->" '(ac-source-semantic)))
+
+;;              ;; ac-sources was also made buffer local in new versions of
+;;              ;; autocomplete.  In my case, I want AutoComplete to use 
+;;              ;; semantic and yasnippet (order matters, if reversed snippets
+;;              ;; will appear before semantic tag completions).
+
+;;              (setq ac-sources '(ac-source-semantic ac-source-yasnippet))
+;;              ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ECB
+
+;;(add-to-list 'load-path "/usr/share/emacs/site-lisp/ecb")
+
+;;2. To load ecb at startup:
+;;(require 'ecb)
+;;- or -
+;;To load ecb first after starting it by ecb-activate:
+;;(require 'ecb-autoloads)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; packages
 
 (setq package-user-dir "~/.emacs.d/lisp/elpa")
 (load-file "~/.emacs.d/lisp/conf/packages.el")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; function-args
+(fa-config-default)
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+(set-default 'semantic-case-fold t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; custom lisp
@@ -149,6 +353,11 @@ line instead."
 
 (setq Man-notify-method 'pushy)
 
+(setq cua-enable-cua-keys nil) ;; only for rectangles
+(cua-mode t)
+
+(setq sentence-end-double-space nil)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; the modeline
 ;;
@@ -217,8 +426,8 @@ line instead."
 ;; some misc other packages
 
 ;; multi-term
-(when (require 'multi-term nil 'noerror)
- (setq multi-term-program "/bin/zsh"))
+;; (when (require 'multi-term nil 'noerror)
+;;  (setq multi-term-program "/bin/zsh"))
 
 ;; auto-install
 (require 'auto-install)
@@ -343,10 +552,17 @@ line instead."
 ;;     (define-key python-mode-map "C-m" 'newline-and-indent)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; cscope
+
+(require 'xcscope)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; C
 
 (require 'cc-mode)
 (setq c-basic-offset 4)
+(add-hook 'c-mode-hook (lambda () (setq comment-start "//"
+                                        comment-end   "")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; CUDA
@@ -520,62 +736,6 @@ line instead."
 (add-to-list 'auto-mode-alist '("\\.doc\\'" . no-word))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; CEDET
-
-;; ;; Load CEDET.
-;; ;; See cedet/common/cedet.info for configuration details.
-;; (load-file "~/.emacs.d/cedet-1.0pre7/common/cedet.el")
-;;(add-to-list 'load-path "/usr/share/emacs/site-lisp/cedet")
-
-;; ;; Enable EDE (Project Management) features
-;;(global-ede-mode 1)
-
-;; ;; Enable EDE for a pre-existing C++ project
-;; ;; (ede-cpp-root-project "NAME" :file "~/myproject/Makefile")
-
-
-;; ;; Enabling Semantic (code-parsing, smart completion) features
-;; ;; Select one of the following:
-
-;; ;; * This enables the database and idle reparse engines
-;; (semantic-load-enable-minimum-features)
-
-;; ;; * This enables some tools useful for coding, such as summary mode
-;; ;;   imenu support, and the semantic navigator
-;;(semantic-load-enable-code-helpers)
-
-;; ;; * This enables even more coding tools such as intellisense mode
-;; ;;   decoration mode, and stickyfunc mode (plus regular code helpers)
-;;  (semantic-load-enable-gaudy-code-helpers)
-
-;; ;; * This enables the use of Exuberent ctags if you have it installed.
-;; ;;   If you use C++ templates or boost, you should NOT enable it.
-;; ;; (semantic-load-enable-all-exuberent-ctags-support)
-;; ;;   Or, use one of these two types of support.
-;; ;;   Add support for new languges only via ctags.
-;; ;; (semantic-load-enable-primary-exuberent-ctags-support)
-;; ;;   Add support for using ctags as a backup parser.
-;; ;; (semantic-load-enable-secondary-exuberent-ctags-support)
-
-;; ;; Enable SRecode (Template management) minor-mode.
-;; ;; (global-srecode-minor-mode 1)
-;;(require 'semantic/sb)
-;;(require 'semantic-gcc)
-;;(semantic-mode 1)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ECB
-
-;;(add-to-list 'load-path "/usr/share/emacs/site-lisp/ecb")
-
-;;2. To load ecb at startup:
-;;(require 'ecb)
-;;- or -
-;;To load ecb first after starting it by ecb-activate:
-;;(require 'ecb-autoloads)
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; EMMS
 
 (load-file "~/.emacs.d/lisp/conf/emms-conf.el")
@@ -729,34 +889,8 @@ line instead."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; themes
 
-;; (require 'color-theme)
-;; (setq custom-theme-directory "~/.emacs.d/themes")
-;; ;; (setq color-theme-is-global t)
-
-;; (require 'color-theme)
-;; (color-theme-initialize)
-
 (setq custom-theme-directory "~/.emacs.d/lisp/themes")
-
-
-;http://emacs-fu.blogspot.com/2009/03/color-theming.html
-;; hook: test win sys and rerun color-theme
-(defun test-win-sys(frame)
-  (let ((color-theme-is-global nil))
-    (select-frame frame)
-    (if (window-system frame)
-        (load-file "~/.emacs.d/lisp/themes/nicolasavru-dark-theme.el")
-      (custom-set-faces '(whitespace-space ((((class color) (background light)) (:foreground "aquamarine3"))))))))
-
-;; hook on after-make-frame-functions
-(add-hook 'after-make-frame-functions 'test-win-sys)
-
-;; default start
-(let ((color-theme-is-global nil))
-  (if (window-system)
-      (load-file "~/.emacs.d/lisp/themes/nicolasavru-dark-theme.el")
-    (custom-set-faces '(whitespace-space ((((class color) (background light)) (:foreground "aquamarine3")))))))
-
+(load-theme 'nicolasavru-dark t)
 
 (set-face-attribute 'default nil :height 100)
 
@@ -778,20 +912,20 @@ line instead."
 (autoload 'magit-status "magit" nil t)
 (global-set-key "\C-xg" 'magit-status)
 
-(require 'git-gutter-fringe)
-(global-git-gutter-mode 1)
-(add-hook 'ruby-mode-hook 'git-gutter-mode)
-(setq git-gutter:verbosity 2) ; don't be that chatty
+;; (require 'git-gutter-fringe)
+;; (global-git-gutter-mode 1)
+;; (add-hook 'ruby-mode-hook 'git-gutter-mode)
+;; (setq git-gutter:verbosity 2) ; don't be that chatty
 
-(global-set-key (kbd "C-x C-g") 'git-gutter:toggle)
-(global-set-key (kbd "C-x v =") 'git-gutter:popup-diff)
-;; Jump to next/previous hunk
-(global-set-key (kbd "C-x p") 'git-gutter:previous-hunk)
-(global-set-key (kbd "C-x n") 'git-gutter:next-hunk)
-;; Stage current hunk
-(global-set-key (kbd "C-x v s") 'git-gutter:stage-hunk)
-;; Revert current hunk
-(global-set-key (kbd "C-x v r") 'git-gutter:revert-hunk)
+;; (global-set-key (kbd "C-x C-g") 'git-gutter:toggle)
+;; (global-set-key (kbd "C-x v =") 'git-gutter:popup-diff)
+;; ;; Jump to next/previous hunk
+;; (global-set-key (kbd "C-x p") 'git-gutter:previous-hunk)
+;; (global-set-key (kbd "C-x n") 'git-gutter:next-hunk)
+;; ;; Stage current hunk
+;; (global-set-key (kbd "C-x v s") 'git-gutter:stage-hunk)
+;; ;; Revert current hunk
+;; (global-set-key (kbd "C-x v r") 'git-gutter:revert-hunk)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1018,46 +1152,6 @@ line instead."
                                (interactive)
                                (switch-to-buffer "*-jabber-roster-*")))
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; sr-speedbar
-
-(require 'sr-speedbar)
-
-;; (when (require 'sr-speedbar nil 'noerror)
-;; ;;   (setq speedbar-supported-extension-expressions
-;; ;;     '(".org" ".[ch]\\(\\+\\+\\|pp\\|c\\|h\\|xx\\)?"
-;; ;;        ".tex\\(i\\(nfo\\)?\\)?" ".el"
-;; ;;        ".java" ".p[lm]" ".pm" ".py"  ".s?html"  "Make
-;; ;;file.am" "configure.ac"))
-;;   (setq
-;;     sr-speedbar-width-x 20
-;;     sr-speedbar-right-side t))
-
-(setq speedbar-hide-button-brackets-flag t
-      speedbar-show-unknown-files t
-      speedbar-smart-directory-expand-flag t
-      speedbar-use-images nil
-      speedbar-indentation-width 2
-      speedbar-update-flag t
-      sr-speedbar-width 30
-      sr-speedbar-width-x 30
-      sr-speedbar-auto-refresh t
-      sr-speedbar-skip-other-window-p t
-      sr-speedbar-right-side nil
-      speedbar-directory-unshown-regexp "^$")
-
-(add-hook 'speedbar-reconfigure-keymaps-hook
-          '(lambda ()
-             (define-key speedbar-mode-map [S-up] 'speedbar-up-directory)
-             (define-key speedbar-mode-map [right] 'speedbar-flush-expand-line)
-             (define-key speedbar-mode-map [left] 'speedbar-contract-line)))
-
-(sr-speedbar-open)
-
-(global-set-key (kbd "C-<f9>") 'sr-speedbar-toggle)
-(global-set-key (kbd "C-<f10>") 'sr-speedbar-select-window)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ocaml
 
@@ -1069,6 +1163,11 @@ line instead."
 ;; clojure
 
 (require 'clojure-mode)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; JavaScript
+
+(setq js-indent-level 2)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; voice
@@ -1122,10 +1221,27 @@ line instead."
 
 (load-file "~/.emacs.d/lisp/conf/mu4e-conf.el")
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; cscope
-
-(require 'xcscope)
-
 
 (festival-say "emacs initialized")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; which-function
+
+(which-function-mode 0)
+
+(setq mode-line-misc-info (delete (assoc 'which-function-mode
+                                      mode-line-misc-info) mode-line-misc-info)
+      which-func-header-line-format '(which-function-mode ("" which-func-format)))
+
+(defadvice which-func-ff-hook (after header-line activate)
+  (when which-function-mode
+    (setq mode-line-misc-info (delete (assoc 'which-function-mode
+                                          mode-line-misc-info) mode-line-misc-info)
+          header-line-format which-func-header-line-format)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; PKGBUILD
+
+(autoload 'pkgbuild-mode "pkgbuild-mode.el" "PKGBUILD mode." t)
+(setq auto-mode-alist (append '(("/PKGBUILD$" . pkgbuild-mode)) auto-mode-alist))

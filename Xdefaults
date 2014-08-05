@@ -4,23 +4,27 @@ URxvt.background: black
 URxvt.foreground: green
 URxvt.cursorColor: yellow
 URxvt.underlineColor: green
-!URxvt.font: -misc-dejavu sans mono-medium-r-normal-*-12-120-100-100-m-0-iso10646-1
+URxvt.font: -misc-dejavu sans mono-medium-r-normal-*-12-120-100-100-m-0-iso10646-1
 URxvt.font: xft:DejaVu Sans Mono:pixelsize=12:antialias=true:hinting=true\
                                            xft:unifont:antialias=true\
                                            xft:Code2000:antialias=true
+! URxvt.conf: xft:unifont:antialias=true
+URxvt.boldfont: xft:DejaVu Sans Mono:pixelsize=12:antialias=true:hinting=true:bold
+
 ! URxvt.font: -*-unifont-*-*-*-*-*-*-*-*-*-*-*-*
 Urxvt.secondaryScroll:  true    # Enable Shift-PageUp/Down in screen
 
 !URxvt.perl-ext-common:  default,matcher,clipboard
 URxvt.urlLauncher:      /usr/bin/chromium
 URxvt.matcher.button:   1
-urxvt*termName: rxvt-256color
+Urxvt*termName: rxvt-unicode-256color
+! urxvt*termName: rxvt-256color
 
 URxvt.perl-ext-common:  font-size
-URxvt.keysym.C-Up:     perl:font-size:increase
-URxvt.keysym.C-Down:   perl:font-size:decrease
-URxvt.keysym.C-S-Up:   perl:font-size:incglobal
-URxvt.keysym.C-S-Down: perl:font-size:decglobal
+URxvt.keysym.Mod4-Up:     perl:font-size:increase
+URxvt.keysym.Mod4-Down:   perl:font-size:decrease
+URxvt.keysym.Mod4-S-Up:   perl:font-size:incglobal
+URxvt.keysym.Mod4-S-Down: perl:font-size:decglobal
 
 ! do not scroll with output
 URxvt*scrollTtyOutput: false

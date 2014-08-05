@@ -84,7 +84,8 @@
   (imagemagick-register-types))
 
 (setq mu4e-view-prefer-html nil)
-(setq mu4e-html2text-command "html2text -utf8 -width 72")
+;; (setq mu4e-html2text-command "html2text -utf8 -nobs -width 72")
+(setq mu4e-html2text-command "w3m -T text/html")
 
 (setq cucc-label-search (concat "maildir:/Cooper/CUCC/ateam@cooper.edu"
                                 " OR "
@@ -108,10 +109,7 @@
              (list (concat "flag:unread AND NOT flag:trashed AND (maildir:/INBOX OR maildir:/SMS OR maildir:\"/Buzsaki_Lab\" OR maildir:/StuyCS OR maildir:/Unigroup OR " cucc-label-search " OR "ulab-label-search " OR " classes-label-search " OR "cooper-misc-label-search ")") "Unread - Important" ?I))
 
 
-
-
 (global-set-key (kbd "C-c m") 'mu4e)
-
 
 (add-hook 'mu4e-compose-pre-hook
           (defun my-set-from-address ()
@@ -148,10 +146,10 @@
 (setq mu4e-attachment-dir "/tmp")
 
 (setq mu4e-headers-fields '((:human-date . 10)
-                           (:flags . 6)
-                           (:mailing-list . 10)
-                           (:from-or-to . 22)
-                           (:subject)))
+                            (:flags . 6)
+                            (:mailing-list . 10)
+                            (:from-or-to . 22)
+                            (:subject)))
 
 (setq mu4e-headers-date-format "%Y-%m-%d")
 (setq mu4e-headers-time-format "%T")
@@ -175,3 +173,9 @@
 
 (add-to-list 'mu4e-view-actions
              '("Snarf PGP keys" . mu4e-view-snarf-pgp-key) t)
+
+(defun mu4e-headers-search-in-new-frame (&optional expr prompt edit ignore-history)
+  "Execute `mu4e-headers-search' in a new frame."
+  (interactive)
+  (select-frame (make-frame))
+  (mu4e-headers-search expr prompt edit ignore-history))
