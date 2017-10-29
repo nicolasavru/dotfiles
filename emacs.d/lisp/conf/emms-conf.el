@@ -29,7 +29,7 @@
 (setq emms-show-format "NP: %s")
 
 ;; When asked for emms-play-directory, always start from this one
-(setq emms-source-file-default-directory "~/music_ro/")
+(setq emms-source-file-default-directory "/mnt/music_ro/")
 
 (require 'emms-player-simple)
 (define-emms-simple-player mikmod '(file)

@@ -28,13 +28,11 @@
 (setq
   user-mail-address "nicolasavru@gmail.com"
   user-full-name  "Nicolas Avrutin"
-  mu4e-compose-signature
-  (concat
-    "Nicolas Avrutin"
-    "\n"))
+  mu4e-compose-signature "Nicolas Avrutin\n"
+)
 
 (setq mu4e-user-mail-address-list '("nicolasavru@gmail.com"
-                                    "Nicolas.Avrutin@nyumc.org"
+                                    "nicolas@avrutin.net"
                                     "avruti@cooper.edu"
                                     "rasputin@cooper.edu"))
 
@@ -87,6 +85,13 @@
 ;; (setq mu4e-html2text-command "html2text -utf8 -nobs -width 72")
 (setq mu4e-html2text-command "w3m -T text/html")
 
+(add-to-list 'mu4e-view-actions
+  '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+
+(add-to-list 'mu4e-view-actions
+  '("xViewXWidget" . mu4e-action-view-with-xwidget) t)
+
+
 (setq cucc-label-search (concat "maildir:/Cooper/CUCC/ateam@cooper.edu"
                                 " OR "
                                 "maildir:/Cooper/CUCC/guru@cooper.edu"
@@ -106,7 +111,7 @@
 (add-to-list 'mu4e-bookmarks
              (list ulab-label-search "uLab" ?U))
 (add-to-list 'mu4e-bookmarks
-             (list (concat "flag:unread AND NOT flag:trashed AND (maildir:/INBOX OR maildir:/SMS OR maildir:\"/Buzsaki_Lab\" OR maildir:/StuyCS OR maildir:/Unigroup OR " cucc-label-search " OR "ulab-label-search " OR " classes-label-search " OR "cooper-misc-label-search ")") "Unread - Important" ?I))
+             (list (concat "flag:unread AND NOT flag:trashed AND (maildir:/INBOX OR maildir:/Unigroup OR " ulab-label-search " OR " classes-label-search " OR "cooper-misc-label-search ")") "Unread - Important" ?I))
 
 
 (global-set-key (kbd "C-c m") 'mu4e)
@@ -120,8 +125,8 @@
                       (cond
                         ((mu4e-message-contact-field-matches msg :to "nicolasavru@gmail.com")
                          "nicolasavru@gmail.com")
-                        ((mu4e-message-contact-field-matches msg :to "Nicolas.Avrutin@nyumc.org")
-                         "Nicolas.Avrutin@nyumc.org")
+                        ((mu4e-message-contact-field-matches msg :to "nicolas@avrutin.net")
+                         "nicolas@avrutin.net")
                         ((mu4e-message-contact-field-matches msg :to "avruti@cooper.edu")
                          "avruti@cooper.edu")
                         ((mu4e-message-contact-field-matches msg :to "rasputin@cooper.edu")
@@ -135,9 +140,6 @@
             (set-fill-column 72)
             (flyspell-mode)
             (footnote-mode)))
-
-(add-to-list 'mu4e-view-actions
-  '("ViewInBrowser" . mu4e-action-view-in-browser) t)
 
 ;; (defun mu4e-checkmail-timer-function () (shell-command "~/.emacs.d/scripts/sauron.sh"))
 ;; (run-at-time "10 sec" 300 'mu4e-checkmail-timer-function)
@@ -179,3 +181,44 @@
   (interactive)
   (select-frame (make-frame))
   (mu4e-headers-search expr prompt edit ignore-history))
+(global-set-key (kbd "C-c M") 'mu4e-headers-search-in-new-frame)
+
+(mu4e-maildirs-extension)
+;; Don't insert a newline before top-level maildirs.
+(setq mu4e-maildirs-extension-before-insert-maildir-hook nil)
+
+(defun mu4e-confirm-no-subject-send ()
+  (unless (or (message-field-value "subject")
+              (yes-or-no-p "Subject is nil. Are you sure you want to send this?"))
+    (signal 'quit nil)))
+(add-hook 'message-send-hook 'mu4e-confirm-no-subject-send)
+
+;; (defun mu4e~draft-cite-original (msg)
+;;   "Return a cited version of the original message MSG as a plist.
+;; This function uses gnus' `mu4e-compose-cite-function', and as such
+;; all its settings apply."
+;;   (with-temp-buffer
+;;     (when (fboundp 'mu4e-view-message-text) ;; keep bytecompiler happy
+;;       (let ((mu4e-view-date-format "%Y-%m-%dT%T%z"))
+;;         (insert (mu4e-view-message-text msg)))
+;;       (message-yank-original)
+;;       (goto-char (point-min))
+;;       (push-mark (point-max))
+;;       ;; set the the signature separator to 'loose', since in the real world,
+;;       ;; many message don't follow the standard...
+;;       (let ((message-signature-separator "^-- *$")
+;;             (message-signature-insert-empty-line t))
+;;         (eval
+;;          `(let ,(if (symbolp message-cite-style)
+;;                     (symbol-value message-cite-style)
+;;                   message-cite-style)
+;;             (funcall mu4e-compose-cite-function))))
+;;          ;; (funcall mu4e-compose-cite-function))
+;;       (pop-mark)
+;;       (goto-char (point-min))
+;;       (mu4e~fontify-cited)
+;;       (buffer-string))))
+
+
+(setq mu4e-compose-cite-function 'message-cite-original
+      message-citation-line-format "On %e %B %Y %R, %f wrote:\n")

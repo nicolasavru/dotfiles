@@ -4,7 +4,7 @@
 (setq package-archives '(("ELPA" . "http://tromey.com/elpa/") 
                          ("gnu" . "http://elpa.gnu.org/packages/")
                          ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")))
+                         ("melpa" . "http://melpa.org/packages/")))
 
 (package-initialize)
 
@@ -14,8 +14,8 @@
 (defvar required-packages
   '(apache-mode async auctex caml
                 clojure-mode color-theme dash doc-mode git-gutter-fringe google-contacts
-                haskell-mode magit markdown-mode oauth2 scala-mode2 org php-mode rainbow-delimiters s
-                sauron slime slime-clj smart-tab tuareg w3m xcscope yasnippet)
+                haskell-mode jabber magit markdown-mode oauth2 scala-mode2 org php-mode rainbow-delimiters s
+                sauron smart-tab smartparens tuareg w3m xcscope yasnippet)
   "Packages which should be installed upon launch")
 
 (dolist (p required-packages)

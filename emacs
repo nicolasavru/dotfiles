@@ -1,4 +1,11 @@
-;(setq load-path (cons "~/.emacs.d" load-path))
+;; ;(setq load-path (cons "~/.emacs.d" load-path))
+
+;; ;; Added by Package.el.  This must come before configurations of
+;; ;; installed packages.  Don't delete this line.  If you don't want it,
+;; ;; just comment it out by adding a semicolon to the start of the line.
+;; ;; You may delete these explanatory comments.
+;; (package-initialize)
+
 (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
     (let* ((my-lisp-dir "~/.emacs.d/lisp/")
            (default-directory my-lisp-dir))
@@ -163,12 +170,13 @@ save the pointer marker if tag is found"
 (add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
 
 
-;; Autocomplete
+;; ;; Autocomplete
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories
              (expand-file-name "~/.emacs.d/lisp/elpa/auto-complete-20140322.32/dict"))
 (setq ac-comphist-file (expand-file-name
                         "~/.emacs.d/ac-comphist.dat"))
+
 ;; (global-auto-complete-mode t)
 
 ;; (ac-config-default)
@@ -228,8 +236,8 @@ save the pointer marker if tag is found"
 ;; emacs or package lisp files which I have modified
 ;; (possibly awaiting patch acceptance)
 
-(load-file "~/.emacs.d/lisp/custom-lisp/emms-lastfm-scrobbler.el")
-(load-file "~/.emacs.d/lisp/custom-lisp/emms-get-lyrics.el")
+;(load-file "~/.emacs.d/lisp/custom-lisp/emms-lastfm-scrobbler.el")
+;(load-file "~/.emacs.d/lisp/custom-lisp/emms-get-lyrics.el")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; private
@@ -245,6 +253,11 @@ save the pointer marker if tag is found"
 ;http://www.djcbsoftware.nl/dot-emacs.html
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; general settings
+
+;; (set-frame-font
+;;  "DejaVu Sans Mono:size=17:foundry=PfEd:weight=normal:slant=normal:width=normal:spacing=100:scalable=true:hinting=false")
+(set-frame-font
+ "DejaVu Sans Mono:size=17:hinting=false")
 
 (setq message-log-max 1000)              ;; set Message buffer length to 1000 lines
 
@@ -271,6 +284,8 @@ save the pointer marker if tag is found"
 (file-name-shadow-mode t)                ;; be smart about filenames in mbuf
 
 (setq require-final-newline t)           ;; end files with a newline
+
+(setq-default fill-column 80)
 
 ;; slick-copy: make copy-past a bit more intelligent
 ;; from: http://www.emacswiki.org/emacs/SlickCopy
@@ -399,12 +414,6 @@ line instead."
   (global-hl-line-mode t)) ;; turn it on for all modes by default
 
 
-
-;; http://www.emacswiki.org/cgi-bin/wiki/ShowParenMode
-(when (fboundp 'show-paren-mode)
-  (show-paren-mode t)
-  (setq show-paren-style 'parenthesis))
-
 ;; overrride the default function....
 (defun emacs-session-filename (SESSION-ID)
   (concat "~/.emacs.d/cache/session." SESSION-ID))
@@ -438,7 +447,7 @@ line instead."
 (require 'fullscreen)
 
 (require 'rainbow-delimiters)
-(global-rainbow-delimiters-mode)
+(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
 (require 'unbound)
 
@@ -513,7 +522,6 @@ line instead."
 
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
-(show-paren-mode 1)
 
 (autoload 'linum-mode "linum" "mode for line numbers" t)
 
@@ -560,23 +568,39 @@ line instead."
 ;; C
 
 (require 'cc-mode)
-(setq c-basic-offset 4)
-(add-hook 'c-mode-hook (lambda () (setq comment-start "//"
-                                        comment-end   "")))
+
+(setq c-basic-offset 4
+      comment-start "//"
+      comment-end   ""
+      fill-column 80)
+(defun my-c-mode-hook ()
+  (c-set-offset 'statement-block-intro '+)
+  (c-set-offset 'substatement-open '0)
+  (c-set-offset 'substatement-label '0)
+  (c-set-offset 'label '0)
+  (c-set-offset 'statement-cont '+)
+  (c-set-offset 'access-label '/)
+  (c-set-offset 'arglist-intro '+))
+
+(add-hook 'c-mode-hook 'my-c-mode-hook)
+(add-hook 'c++-mode-hook 'my-c-mode-hook)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; CUDA
 
 (setq auto-mode-alist (append '(("/*.\.cu$" . c++-mode)) auto-mode-alist))
-(setq cscope-indexer-suffixes (cons "*.cu" cscope-indexer-suffixes))
+; (setq cscope-indexer-suffixes (cons "*.cu" cscope-indexer-suffixes))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Haskell
 
 (require 'haskell-mode)
+(require 'inf-haskell)
 ;; (load "~/.emacs.d/haskellmode-emacs/haskell-site-file")
 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+(add-hook 'haskell-mode-hook 'interactive-haskell-mode)
 (setq auto-mode-alist (append '(("/*.\.hs$" . haskell-mode)) auto-mode-alist))
 ;;(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
 ;;(add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
@@ -597,6 +621,10 @@ line instead."
 (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 ;(add-hook 'LaTeX-mode-hook '(setq whitespace-line nil))
 (setq reftex-plug-into-AUCTeX t)
+
+(setq-default TeX-master "main")
+(setq LaTeX-command-style '(("" "%(PDF)%(latex) -shell-escape %S%(PDFout)")))
+
 
 ; http://old.nabble.com/shell-escape-td1076639.html
 (defun TeX-toggle-escape nil (interactive)
@@ -623,7 +651,9 @@ line instead."
 (define-key LaTeX-mode-map (kbd "C-c C-c") 'my-TeX-command-master))
 
 (add-hook 'LaTeX-mode-hook 'my-latex-hook)
-
+(add-hook 'LaTeX-mode-hook
+          (lambda () (set (make-variable-buffer-local 'TeX-electric-math)
+                          (cons "\\(" "\\)"))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -674,39 +704,83 @@ line instead."
 (define-key global-map [(control meta ?r)] 'remember)
 
 (custom-set-variables
- '(org-directory "~/Dropbox/org")
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(auto-insert (quote t))
+ '(auto-insert-alist
+   (quote
+    ((("\\.\\(h\\|hpp\\)\\'" . "C / C++ header")
+      .
+      ["skeleton.h" c++-mode my/autoinsert-yas-expand])
+     (("\\.c\\'" . "C source")
+      .
+      ["skeleton.c" my/autoinsert-yas-expand])
+     (("\\.cpp\\'" . "C++ source")
+      .
+      ["skeleton.cpp" my/autoinsert-yas-expand])
+     (("\\.sh\\'" . "Shell script")
+      .
+      ["skeleton.sh" my/autoinsert-yas-expand])
+     (("\\.el\\'" . "Emacs Lisp")
+      .
+      ["skeleton.el" my/autoinsert-yas-expand])
+     (("\\.py\\'" . "Python script")
+      .
+      ["skeleton.py" my/autoinsert-yas-expand])
+     (("[mM]akefile\\'" . "Makefile")
+      .
+      ["Makefile" my/autoinsert-yas-expand])
+     (("\\.tex\\'" . "TeX/LaTeX")
+      .
+      ["skeleton.tex" my/autoinsert-yas-expand]))))
+ '(org-agenda-custom-commands
+   (quote
+    (("d" todo "DELEGATED" nil)
+     ("c" todo "DONE|DEFERRED|CANCELLED" nil)
+     ("w" todo "WAITING" nil)
+     ("W" agenda ""
+      ((org-agenda-ndays 21)))
+     ("A" agenda ""
+      ((org-agenda-skip-function
+        (lambda nil
+          (org-agenda-skip-entry-if
+           (quote notregexp)
+           "\\=.*\\[#A\\]")))
+       (org-agenda-ndays 1)
+       (org-agenda-overriding-header "Today's Priority #A tasks: ")))
+     ("u" alltodo ""
+      ((org-agenda-skip-function
+        (lambda nil
+          (org-agenda-skip-entry-if
+           (quote scheduled)
+           (quote deadline)
+           (quote regexp)
+           "
+]+>")))
+       (org-agenda-overriding-header "Unscheduled TODO entries: "))))))
  '(org-agenda-files (quote ("~/Dropbox/org/todo.org")))
- '(org-default-notes-file "~/Dropbox/org/notes.org")
- '(org-mobile-inbox-for-pull "~/Dropbox/org/todo.org")
  '(org-agenda-ndays 7)
- '(org-deadline-warning-days 14)
  '(org-agenda-show-all-dates t)
  '(org-agenda-skip-deadline-if-done t)
  '(org-agenda-skip-scheduled-if-done t)
  '(org-agenda-start-on-weekday nil)
- '(org-reverse-note-order t)
+ '(org-deadline-warning-days 14)
+ '(org-default-notes-file "~/Dropbox/org/notes.org")
+ '(org-directory "~/Dropbox/org")
  '(org-fast-tag-selection-single-key (quote expert))
- '(org-agenda-custom-commands
-   (quote (("d" todo "DELEGATED" nil)
-       ("c" todo "DONE|DEFERRED|CANCELLED" nil)
-       ("w" todo "WAITING" nil)
-       ("W" agenda "" ((org-agenda-ndays 21)))
-       ("A" agenda ""
-        ((org-agenda-skip-function
-          (lambda nil
-        (org-agenda-skip-entry-if (quote notregexp) "\\=.*\\[#A\\]")))
-         (org-agenda-ndays 1)
-         (org-agenda-overriding-header "Today's Priority #A tasks: ")))
-       ("u" alltodo ""
-        ((org-agenda-skip-function
-          (lambda nil
-        (org-agenda-skip-entry-if (quote scheduled) (quote deadline)
-                      (quote regexp) "\n]+>")))
-         (org-agenda-overriding-header "Unscheduled TODO entries: "))))))
+ '(org-mobile-inbox-for-pull "~/Dropbox/org/todo.org")
  '(org-remember-store-without-prompt t)
  '(org-remember-templates
-   (quote ((116 "* TODO %?\n  %u" "~/Dropbox/org/todo.org" "Tasks")
-       (110 "* %u %?" "~/Dropbox/org/notes.org" "Notes"))))
+   (quote
+    ((116 "* TODO %?
+  %u" "~/Dropbox/org/todo.org" "Tasks")
+     (110 "* %u %?" "~/Dropbox/org/notes.org" "Notes"))))
+ '(org-reverse-note-order t)
+ '(package-selected-packages
+   (quote
+    (rust-mode rustfmt jabber smart-tab scala-mode2 google-contacts doc-mode color-theme clojure-mode auto-complete-chunk auto-complete-c-headers auto-complete-auctex auctex apache-mode)))
  '(remember-annotation-functions (quote (org-remember-annotation)))
  '(remember-handler-functions (quote (org-remember-handler))))
 
@@ -757,7 +831,11 @@ line instead."
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; misc funcitons
+;; smartparens
+
+(require 'smartparens-config)
+(show-smartparens-global-mode)
+(setq sp-show-pair-delay 1)
 
 ;; (defadvice show-paren-function
 ;;   (after show-matching-paren-offscreen activate)
@@ -775,32 +853,80 @@ line instead."
 ;;     (if (not (null matching-text))
 ;;         (message matching-text))))
 
-(defadvice show-paren-function
-  (after show-matching-paren-offscreen activate)
-  "If the matching paren is offscreen, show the matching line in the
-    echo area. Has no effect if the character before point is not of
-    the syntax class ')'."
-  (interactive)
-  (let* ((cb (char-before (point)))
-         (matching-text (and cb
-                             (char-equal (char-syntax cb) ?\) )
-                             (blink-matching-open))))
-    (when matching-text (message matching-text))))
+;; (defadvice show-paren-function
+;;   (after show-matching-paren-offscreen activate)
+;;   "If the matching paren is offscreen, show the matching line in the
+;;     echo area. Has no effect if the character before point is not of
+;;     the syntax class ')'."
+;;   (interactive)
+;;   (let* ((cb (char-before (point)))
+;;          (matching-text (and cb
+;;                              (char-equal (char-syntax cb) ?\) )
+;;                              (blink-matching-open))))
+;;     (when matching-text (message matching-text))))
 
 
-(defun goto-match-paren (arg)
-  "Go to the matching  if on (){}[], similar to vi style of % "
-  (interactive "p")
-  ;; first, check for "outside of bracket" positions expected by forward-sexp, etc.
-  (cond ((looking-at "[\[\(\{]") (forward-sexp))
-        ((looking-back "[\]\)\}]" 1) (backward-sexp))
-        ;; now, try to succeed from inside of a bracket
-        ((looking-at "[\]\)\}]") (forward-char) (backward-sexp))
-        ((looking-back "[\[\(\{]" 1) (backward-char) (forward-sexp))
-        (t nil)))
+(require 's)
+;; (defadvice sp-show--pair-function
+;;   (after sp-show--pair-function-offscreen activate)
+;;   "If the matching paren is offscreen, show the matching line in the
+;;           echo area."
+;;   (interactive)
+;;   (let ((vis-buf (save-excursion
+;;            (cons (progn (move-to-window-line 0) (point))
+;;              (progn (move-to-window-line -1) (line-end-position)))))
+;;     (matching-sexp (if (and (sp-get (sp-get-sexp nil) :beg)
+;;                 (= (point) (sp-get (sp-get-sexp nil) :beg)))
+;;                (cons (sp-get (sp-get-sexp nil) :beg)
+;;                  (sp-get (sp-get-sexp nil) :end))
+;;              (if (and (sp-get (sp-get-sexp t) :end)
+;;                   (= (point) (sp-get (sp-get-sexp t) :end)))
+;;                  (cons (sp-get (sp-get-sexp t) :beg)
+;;                    (sp-get (sp-get-sexp t) :end))
+;;                nil))))
+;;     (when matching-sexp
+;;       (if (> (car vis-buf)
+;;          (car matching-sexp))
+;;       ;; opening delim is offscreen
+;;       (message "Matches %s"
+;;            (s-trim
+;;             (save-excursion (goto-char (car matching-sexp))
+;;                     (thing-at-point 'line))))
+;;     (if (< (cdr vis-buf)
+;;            (cdr matching-sexp))
+;;         ;; closing delim is offscreen
+;;         (message "Matches %s"
+;;              (s-trim
+;;               (save-excursion (goto-char (cdr matching-sexp))
+;;                       (thing-at-point 'line)))))))))
 
-(global-set-key (kbd "<3270_PA1>") 'goto-match-paren)
-(global-set-key (kbd "C-<menu>") 'goto-match-paren)
+;; (defun goto-match-paren (arg)
+;;   "Go to the matching  if on (){}[], similar to vi style of % "
+;;   (interactive "p")
+;;   ;; first, check for "outside of bracket" positions expected by forward-sexp, etc.
+;;   (cond ((looking-at (sp--get-opening-regexp)) (sp-forward-sexp))
+;;         ((looking-back (sp--get-closing-regexp) 1) (sp-backward-sexp))
+;;         ;; now, try to succeed from inside of a bracket
+;;         ((looking-at (sp--get-closing-regexp)) (forward-char) (sp-backward-sexp))
+;;         ((looking-back (sp--get-opening-regexp) 1) (backward-char) (sp-forward-sexp))
+;;         ;; if we're inside a pair, go to the beginning of the pair
+;;         ((sp-get-enclosing-sexp)
+;;          (progn
+;;              (push-mark)
+;;              (while (not (looking-at (sp--get-opening-regexp)))
+;;                (backward-char 1)
+;;                (cond ((looking-at (sp--get-closing-regexp))
+;;                       (message "->> )")
+;;                       (forward-char 1)
+;;                       (sp-backward-sexp)
+;;                       (backward-char 1))))))
+;;         (t nil)))
+
+;; (global-set-key (kbd "<3270_PA1>") 'goto-match-paren)
+;; (global-set-key (kbd "C-<menu>") 'goto-match-paren)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; misc funcitons
 
 (defun joc-enlarge-by-ten()
   "enlarges a window 10 lines"
@@ -846,6 +972,8 @@ line instead."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; SLIME
 
+(load (expand-file-name "~/quicklisp/slime-helper.el"))
+(setq inferior-lisp-program "sbcl")
 (require 'slime)
 
 (eval-after-load "slime"
@@ -854,32 +982,24 @@ line instead."
            '((sbcl ("/usr/bin/sbcl"))
              (ecl ("/usr/bin/ecl"))
              (clisp ("/usr/bin/clisp"))))
-     (slime-setup '(
-                    slime-asdf
+     (slime-setup '(slime-asdf
                     slime-autodoc
                     slime-editing-commands
                     slime-fancy-inspector
                     slime-fontifying-fu
                     slime-indentation
-                    slime-mdot-fu
+                    ;; slime-mdot-fu
                     slime-package-fu
                     slime-references
                     slime-sbcl-exts
                     slime-scratch
-                    slime-xref-browser
-                    ))
+                    slime-xref-browser))
      (slime-autodoc-mode)
      (setq slime-complete-symbol*-fancy t)
      ))
 
-;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
-
 (setq common-lisp-hyperspec-root "/usr/share/doc/HyperSpec/")
-
 (global-set-key (kbd "<f5>") 'hyperspec-lookup)
-
-(load (expand-file-name "~/quicklisp/slime-helper.el"))
-(setq inferior-lisp-program "sbcl")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ERC
@@ -1055,9 +1175,12 @@ line instead."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; fixed point completion
+;; currently broken in minibuffer:
+;; Making completion list...
+;; let*: Symbol’s value as variable is void: frame
 
-(load "~/.emacs.d/lisp/fixed-point-completion/fixed-point-completion.el")
-(enable-fixed-point-completions)
+;; (load "~/.emacs.d/lisp/fixed-point-completion/fixed-point-completion.el")
+;; (enable-fixed-point-completions)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; e-sink
@@ -1077,7 +1200,7 @@ line instead."
 
 (require 'yasnippet)
 ;; (setq yas/root-directory '("~/.emacs.d/yasnippet/snippets" "~/.emacs.d/snippets"))
-(mapc 'yas/load-directory yas/root-directory)
+;; (mapc 'yas/load-directory yas/root-directory)
 (add-to-list 'hippie-expand-try-functions-list 'yas/hippie-try-expand)
 (yas/global-mode 1)
 
@@ -1093,21 +1216,12 @@ line instead."
   "Replace text in yasnippet template."
   (yas/expand-snippet (buffer-string) (point-min) (point-max)))
 
-(custom-set-variables
- '(auto-insert 't)
- '(auto-insert-alist '((("\\.\\(h\\|hpp\\)\\'" . "C / C++ header") . ["skeleton.h" c++-mode my/autoinsert-yas-expand])
-                       (("\\.c\\'" . "C source") . ["skeleton.c" my/autoinsert-yas-expand])
-                       (("\\.cpp\\'" . "C++ source") . ["skeleton.cpp" my/autoinsert-yas-expand])
-                       (("\\.sh\\'" . "Shell script") . ["skeleton.sh" my/autoinsert-yas-expand])
-                       (("\\.el\\'" . "Emacs Lisp") . ["skeleton.el" my/autoinsert-yas-expand])
-                       (("\\.py\\'" . "Python script") . ["skeleton.py" my/autoinsert-yas-expand])
-                       (("[mM]akefile\\'" . "Makefile") . ["Makefile" my/autoinsert-yas-expand])
-                       (("\\.tex\\'" . "TeX/LaTeX") . ["skeleton.tex" my/autoinsert-yas-expand]))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; w3m
 
-(require 'w3m-load)
+(require 'w3m)
 
 (setq browse-url-browser-function 'w3m-browse-url)
 (autoload 'w3m-browse-url "w3m" "Ask a WWW browser to show a URL." t)
@@ -1124,10 +1238,49 @@ line instead."
 (add-hook 'w3m-mode-hook 'w3m-mode-options)
 (setq w3m-use-cookies t)
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; xwidget
+
+(require 'xwidget)
+
+;; make these keys behave like normal browser
+(define-key xwidget-webkit-mode-map [mouse-4] 'xwidget-webkit-scroll-down)
+(define-key xwidget-webkit-mode-map [mouse-5] 'xwidget-webkit-scroll-up)
+(define-key xwidget-webkit-mode-map (kbd "<up>") 'xwidget-webkit-scroll-down)
+(define-key xwidget-webkit-mode-map (kbd "<down>") 'xwidget-webkit-scroll-up)
+(define-key xwidget-webkit-mode-map (kbd "M-w") 'xwidget-webkit-copy-selection-as-kill)
+(define-key xwidget-webkit-mode-map (kbd "C-c") 'xwidget-webkit-copy-selection-as-kill)
+
+;; adapt webkit according to window configuration chagne automatically
+;; without this hook, every time you change your window configuration,
+;; you must press 'a' to adapt webkit content to new window size
+(add-hook 'window-configuration-change-hook (lambda ()
+               (when (equal major-mode 'xwidget-webkit-mode)
+                 (xwidget-webkit-adjust-size-dispatch))))
+
+;; by default, xwidget reuses previous xwidget window,
+;; thus overriding your current website, unless a prefix argument
+;; is supplied
+;;
+;; This function always opens a new website in a new window
+(defun xwidget-browse-url-no-reuse (url &optional sessoin)
+  (interactive (progn
+                 (require 'browse-url)
+                 (browse-url-interactive-arg "xwidget-webkit URL: "
+                                             )))
+  (xwidget-webkit-browse-url url t))
+
+;; make xwidget default browser
+(setq browse-url-browser-function (lambda (url session)
+                    (other-window 1)
+                    (xwidget-browse-url-no-reuse url)))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; jabber
 
-(require 'jabber-autoloads)
+;; (require 'jabber-autoloads)
 
 (setq jabber-show-resources 'always)
 (setq jabber-autoaway-method 'jabber-xprintidle-get-idle-time)
@@ -1169,11 +1322,11 @@ line instead."
 
 (setq js-indent-level 2)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; voice
-(require 'festival)
-(festival-start)
-(require 'festival-extension)
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;; voice
+;; (require 'festival)
+;; (festival-start)
+;; (require 'festival-extension)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1202,9 +1355,9 @@ line instead."
               (sauron-fx-sox "/usr/share/sounds/trillian/generic-event.wav")
               (sauron-fx-gnome-osd(format "%S: %s" origin msg) 5)))))
 
-(defun sauron-fx-festival (msg)
-  "Say MSG with festival."
-  (festival-say msg))
+;; (defun sauron-fx-festival (msg)
+;;   "Say MSG with festival."
+;;   (festival-say msg))
 
 (sauron-start)
 
@@ -1222,7 +1375,7 @@ line instead."
 (load-file "~/.emacs.d/lisp/conf/mu4e-conf.el")
 
 
-(festival-say "emacs initialized")
+;; (festival-say "emacs initialized")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; which-function
@@ -1245,3 +1398,16 @@ line instead."
 
 (autoload 'pkgbuild-mode "pkgbuild-mode.el" "PKGBUILD mode." t)
 (setq auto-mode-alist (append '(("/PKGBUILD$" . pkgbuild-mode)) auto-mode-alist))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; TRAMP
+; (setq tramp-use-ssh-controlmaster-options nil)
+; (setq server-use-tcp t
+;       server-port    9999)
