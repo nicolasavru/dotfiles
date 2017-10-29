@@ -12,10 +12,38 @@
   (package-refresh-contents))
 
 (defvar required-packages
-  '(apache-mode async auctex caml
-                clojure-mode color-theme dash doc-mode git-gutter-fringe google-contacts
-                haskell-mode jabber magit markdown-mode oauth2 scala-mode2 org php-mode rainbow-delimiters s
-                sauron smart-tab smartparens tuareg w3m xcscope yasnippet)
+  '(apache-mode
+    async
+    auctex
+    caml
+    clojure-mode
+    color-theme
+    dash
+    doc-mode
+    emms-player-mpv
+    git-gutter-fringe
+    google-contacts
+    haskell-mode
+    jabber
+    julia-mode
+    magit
+    markdown-mode
+    mu4e-maildirs-extension
+    oauth2
+    offlineimap
+    org
+    php-mode
+    rainbow-delimiters
+    rust-mode
+    s
+    sauron
+    scala-mode2
+    smart-tab
+    smartparens
+    tuareg
+    w3m
+    xcscope
+    yasnippet)
   "Packages which should be installed upon launch")
 
 (dolist (p required-packages)

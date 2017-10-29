@@ -780,7 +780,7 @@ line instead."
  '(org-reverse-note-order t)
  '(package-selected-packages
    (quote
-    (rust-mode rustfmt jabber smart-tab scala-mode2 google-contacts doc-mode color-theme clojure-mode auto-complete-chunk auto-complete-c-headers auto-complete-auctex auctex apache-mode)))
+    (emms-player-mpv offlineimap rust-mode rustfmt jabber smart-tab scala-mode2 google-contacts doc-mode color-theme clojure-mode auto-complete-chunk auto-complete-c-headers auto-complete-auctex auctex apache-mode)))
  '(remember-annotation-functions (quote (org-remember-annotation)))
  '(remember-handler-functions (quote (org-remember-handler))))
 
