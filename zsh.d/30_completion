@@ -99,16 +99,13 @@ zstyle ':completion:*:history-words' menu yes
 
 
 #[ hosts and users ]############################################################
-hosts=($((
-        ( [ -r ~/.ssh/config ] && awk '/^host +[a-z]/ { print $2 }' ~/.ssh/config) ;\
-        ( [ -r ~/.ssh/known_hosts ] && \
-        awk '{print $1}' ~/.ssh/known_hosts | tr , '\n' | tr -d '[' | tr -d ']' | awk -F ':' '{print $1}') ;\
-        ( [ -r /etc/hosts ] && : ${(A)_etc_hosts:=${(s: :)${(ps:\t:)${${(f)~~"$(</etc/hosts)"}%%\#*}##[:blank:]#[^[:blank:]]#}}} || _etc_hosts=()) ;\
-) | sort -u)
-       "$HOST"
-        localhost)
+# hosts=($((
+#         ( [ -r ~/.ssh/config ] && awk '/^host +[a-z]/ { print $2 }' ~/.ssh/config) ;\
+#         ( [ -r ~/.ssh/known_hosts ] && awk '{print $1}' ~/.ssh/known_hosts | tr , '\n' | tr -d '[' | tr -d ']' | awk -F ':' '{print $1}') ;\
+#         ( [ -r /etc/hosts ] && : ${(A)_etc_hosts:=${(s: :)${(ps:\t:)${${(f)~~"$(</etc/hosts)"}%%\#*}##[:blank:]#[^[:blank:]]#}}} || _etc_hosts=()) ;\) | sort -u)
+#        "$HOST" localhost)
 
-zstyle ':completion:*' hosts $hosts
+# zstyle ':completion:*' hosts $hosts
 # zstyle ':completion:*:hosts' list-colors '=(#b)(*)(.jukie.net)=01;30=01;31' '=[^.]#=01;31'
 
 # SSH Completion

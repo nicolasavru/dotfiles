@@ -52,6 +52,9 @@ bindkey "\e[\301"           beginning-of-line                   # rxvt M-up
 bindkey "\e[\302"           end-of-line                         # rxvt M-down
 bindkey '\e[3\376'  delete-word   # rxvt M-delete
 
+# xterm
+bindkey "^[[1;5C" forward-word
+bindkey "^[[1;5D" backward-word
 
 # movement
 # bindkey "^[z"               backward-word                       # ALT-Z
