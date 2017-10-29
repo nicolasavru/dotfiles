@@ -1,16 +1,15 @@
-Config { font = "-misc-dejavu sans mono-medium-r-normal-*-10-120-100-100-m-0-iso10646-1"
---       , position = BottomW L 90
+Config { font = "xft:DejaVu Sans Mono:weight=medium:slant=r:size=7:antialias=true,hinting=false"
        , position = TopSize L 90 18
-       , commands = [ Run Network "eth0" ["-L","0","-H","32","--normal","green","--high","red"] 10
-                   , Run MultiCpu ["-t","<total0>% <total1>% <total2>% <total3>%"] 10
-                   , Run Memory ["-t","Mem: <usedratio>%"] 10
-                   , Run Swap [] 10
-                   , Run Date "%H:%M:%S %a %b %_d %Y" "date" 10
-                   , Run CoreTemp ["-t", "Temp: <core0> <core1> <core2> <core3>C",
-                                   "-L", "40", "-H", "65",
-                                   "-l", "lightblue", "-n", "gray90", "-h", "red"] 50
-                   , Run Kbd [("ru", "RU"), ("us", "US")]
-                   , Run StdinReader
-                   ]
-                   , template = "%StdinReader% }{ %multicpu% | %coretemp% | %memory% | %swap% | %eth0% | %kbd% | <fc=#ee9a00>%date%</fc>"
+       , commands = [ Run Network "ens4" ["-S", "true", "-t", "<dev>: rx: <rx> tx: <tx>"] 10
+                    , Run MultiCpu ["-t","<total0>% <total1>% <total2>% <total3>% <total4>% <total5>% <total6>% <total7>% <total8>% <total9>% <total10>% <total11>%"] 10
+                    , Run Memory ["-t","Mem: <usedratio>%"] 10
+                    , Run Swap [] 10
+                    , Run Date "%H:%M:%S %a %b %_d %Y" "date" 10
+                    , Run CoreTemp ["-t", "<core0> <core1> <core2> <core3> <core4> <core5> <core6>C",
+                                    "-L", "40", "-H", "65",
+                                    "-l", "lightblue", "-n", "gray90", "-h", "red"] 10
+                    , Run Kbd [("ru", "RU"), ("us", "US")]
+                    , Run StdinReader
+                    ]
+       , template = "%StdinReader% }{ %multicpu% | %coretemp% | %memory% | %swap% | %ens4% | %kbd% | <fc=#ee9a00>%date%</fc>"
       }
