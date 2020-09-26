@@ -13,3 +13,30 @@
 [submodule "emacs.d/lisp/cedet"]
   path = emacs.d/lisp/cedet
   url = http://git.code.sf.net/p/cedet/git
+[submodule "emacs.d/lisp/org-wiki"]
+	path = emacs.d/lisp/org-wiki
+	url = https://github.com/caiorss/org-wiki
+[submodule "emacs.d/org-html-themes"]
+	path = emacs.d/org-html-themes
+	url = https://github.com/fniessen/org-html-themes.git
+[submodule "emacs.d/lisp/tmtxt-dired-async"]
+	path = emacs.d/lisp/tmtxt-dired-async
+	url = https://github.com/tmtxt/tmtxt-dired-async.git
+[submodule "emacs.d/lisp/tmtxt-async-tasks"]
+	path = emacs.d/lisp/tmtxt-async-tasks
+	url = https://github.com/tmtxt/tmtxt-async-tasks.git
+[submodule "emacs.d/javascript/chroma.js"]
+	path = emacs.d/javascript/chroma.js
+	url = https://github.com/gka/chroma.js.git
+[submodule "emacs.d/javascript/d3-hsv"]
+	path = emacs.d/javascript/d3-hsv
+	url = https://github.com/d3/d3-hsv.git
+[submodule "emacs.d/javascript/d3-cam16"]
+	path = emacs.d/javascript/d3-cam16
+	url = https://github.com/d3/d3-cam16.git
+[submodule "emacs.d/javascript/d3-cam02"]
+	path = emacs.d/javascript/d3-cam02
+	url = https://github.com/connorgr/d3-cam02.git
+[submodule "emacs.d/javascript/d3-color"]
+	path = emacs.d/javascript/d3-color
+	url = https://github.com/d3/d3-color.git
