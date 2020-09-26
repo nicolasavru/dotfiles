@@ -75,6 +75,20 @@
  '(bold ((t (:weight bold :inherit (default)))))
  '(bold-italic ((t (:weight bold :inherit (italic)))))
  '(italic ((((supports :slant italic)) (:slant italic :foreground "blanched almond" :inherit (default)))))
- '(default ((t (:family "DejaVu Sans Mono" :foreground "ivory3" :background "black")))))
+ '(default ((t (:family "DejaVu Sans Mono" :foreground "ivory3" :background "black"))))
+
+ ;; sunrise
+ '(sr-directory-face ((t (:inherit default))))
+ '(sr-symlink-face ((t (:foreground "cyan"))))
+ '(sr-symlink-directory-face ((t (:foreground "cyan"))))
+ '(sr-tabs-active-face ((t (:inherit variable-pitch :bold t :background "steel blue" :height 0.9))))
+ '(sr-tabs-active-face ((t (:inherit variable-pitch :bold t :background "steel blue" :height 0.9))))
+ '(sr-tabs-inactive-face ((t (:inherit variable-pitch :bold t :background "medium blue" :height 0.9))))
+ '(sr-active-path-face ((t (:background "black" :foreground "yellow" :bold t :height 120))))
+ '(sr-passive-path-face ((t (:background "black" :foreground "lightgray" :bold t :height 120))))
+ '(dired-filetype-document ((t (:foreground "tomato3"))))
+
+ '(matrix-client-date-header ((t (:foreground "tomato3"))))
+ )
 
 (provide-theme 'nicolasavru-dark)
