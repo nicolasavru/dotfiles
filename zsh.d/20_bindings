@@ -98,7 +98,7 @@ bindkey "^[^[[B"            down-case-word                      # ALT-DOWN
 
 # bindkey "^e"                run-with-sudo
 bindkey "^p"                run-ps
-bindkey "^v"                edit_command_line
+bindkey "^x^e"                edit_command_line
 
 # bindkey -s "^r"             "sudo -i\n"
 bindkey -s "^n"             "netstat -ltupn\n"

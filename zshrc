@@ -21,7 +21,7 @@
 # umask 027 # uptight   -rwxr-x---
 # umask 077 # paranoid  -rwx------
 # umask 066 # bofh-like -rw-------
-umask 002
+umask 022
 
 # If root set umask to 022 to prevent new files being created group and world writable
 #if (( EUID == 0 )); then
@@ -35,4 +35,6 @@ for zsh_config in ~/.zsh.d/[0-9][0-9]*[^~] ; do
     source $zsh_config
 done
 
-eval $( dircolors -b $HOME/LS_COLORS/LS_COLORS )
+. /usr/share/LS_COLORS/dircolors.sh
+
+source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

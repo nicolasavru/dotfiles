@@ -12,6 +12,7 @@ alias low2UP='for i in *(.); mv $i ${i:u}'
 
 
 alias em="emacsclient -c"
+alias emn="emacsclient -nw"
 alias es="e-sink.pl"
 alias E="SUDO_EDITOR=\"emacsclient -c -a emacs\" sudoedit"
 

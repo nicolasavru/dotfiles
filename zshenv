@@ -27,9 +27,11 @@ export LESS=" -R "
 export LESSOPEN="|lesspipe.sh %s"
 export PAGER="less"
 
-export WINEDEBUG=-all
+export WINEDEBUG="-all"
 export pacman_program="yaourt"
-export VDPAU_DRIVER=va_gl
+export VDPAU_DRIVER="va_gl"
+
+export LIBVIRT_DEFAULT_URI="qemu:///system"
 
 # Kill flow control
 if tty -s ; then
