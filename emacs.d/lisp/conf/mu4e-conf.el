@@ -8,7 +8,13 @@
 (setq mu4e-trash-folder  "/Trash")
 
 ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
-(setq mu4e-sent-messages-behavior 'delete)
+(setq message-sendmail-envelope-from 'header)
+(setq mu4e-sent-messages-behavior
+      (lambda ()
+        (if (string= (message-sendmail-envelope-from) "nicolasavru@gmail.com")
+            'delete
+          'sent)))
+
 
 ;; setup some handy shortcuts
 ;; you can quickly switch to your Inbox -- press ``ji''
@@ -58,6 +64,59 @@
       smtpmail-default-smtp-server "smtp.gmail.com"
       smtpmail-smtp-server "smtp.gmail.com"
       smtpmail-smtp-service 587)
+(defvar my-mu4e-account-alist
+  '(("nicolasavru@gmail.com"
+     (user-mail-address "nicolasavru@gmail.com")
+     (smtpmail-default-smtp-server "smtp.gmail.com")
+     ;; (smtpmail-local-domain "account1.example.com")
+     ;; (smtpmail-smtp-user "username1")
+     (smtpmail-smtp-server "smtp.gmail.com")
+     (smtpmail-stream-type starttls)
+     (smtpmail-smtp-service 587))
+    ("nicolas@avrutin.net"
+     (user-mail-address "nicolas@avrutin.net")
+    ;(smtpmail-default-smtp-server "smtp.sendgrid.net")
+     (smtpmail-default-smtp-server "mail.avrutin.net")
+     ;; (smtpmail-local-domain "account2.example.com")
+     ;; (smtpmail-smtp-user "username2")
+     ;(smtpmail-smtp-server "smtp.sendgrid.net")
+     (smtpmail-smtp-server "mail.avrutin.net")
+     (smtpmail-stream-type starttls)
+     (smtpmail-smtp-service 587))))
+
+;; (setq message-send-mail-function 'smtpmail-send-it
+;;       smtpmail-stream-type 'starttls
+;;       smtpmail-default-smtp-server "smtp.sendgrid.net"
+;;       smtpmail-smtp-server "smtp.sendgrid.net"
+;;       smtpmail-smtp-service 587)
+
+(defun my-mu4e-set-account ()
+  "Set the account for composing a message."
+  (let* ((account
+          (if mu4e-compose-parent-message
+              (seq-find (lambda (x) x)
+                        (mapcar
+                         (lambda (my-address)
+                           (message my-address)
+                           (if (mu4e-message-contact-field-matches
+                                mu4e-compose-parent-message
+                                '(:to :cc :bcc :from) my-address)
+                               my-address
+                             nil))
+                         mu4e-user-mail-address-list))
+            (completing-read (format "Compose with account: (%s) "
+                                     (mapconcat #'(lambda (var) (car var))
+                                                my-mu4e-account-alist "/"))
+                             (mapcar #'(lambda (var) (car var)) my-mu4e-account-alist)
+                             nil t nil nil (caar my-mu4e-account-alist))))
+         (account-vars (cdr (assoc account my-mu4e-account-alist))))
+    (if account-vars
+        (mapc #'(lambda (var)
+                  (set (car var) (cadr var)))
+              account-vars)
+      (error "No email account found"))))
+
+(add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
 
 ;; don't keep message buffers around
 (setq message-kill-buffer-on-exit t)
@@ -68,7 +127,8 @@
         (mu4e-ask-maildir "Refile to maildir: ")))
 
 (setq
-  mu4e-get-mail-command "offlineimap"
+ ;; mu4e-get-mail-command "offlineimap"
+ mu4e-get-mail-command "mbsync gmail"
   mu4e-update-interval 300)
 
 (setq mu4e-view-show-addresses t)
@@ -89,7 +149,19 @@
   '("ViewInBrowser" . mu4e-action-view-in-browser) t)
 
 (add-to-list 'mu4e-view-actions
-  '("xViewXWidget" . mu4e-action-view-with-xwidget) t)
+             '("xViewXWidget" . mu4e-action-view-with-xwidget) t)
+
+(remove-hook 'kill-buffer-query-functions #'xwidget-kill-buffer-query-function)
+(define-key xwidget-webkit-mode-map (kbd "q")
+  (lambda () (interactive) (quit-window t)))
+
+;; adapt webkit according to window configuration chagne automatically
+;; without this hook, every time you change your window configuration,
+;; you must press 'a' to adapt webkit content to new window size
+(add-hook 'window-configuration-change-hook (lambda ()
+               (when (equal major-mode 'xwidget-webkit-mode)
+                 (xwidget-webkit-adjust-size-dispatch))))
+
 
 
 (setq cucc-label-search (concat "maildir:/Cooper/CUCC/ateam@cooper.edu"
@@ -222,3 +294,160 @@
 
 (setq mu4e-compose-cite-function 'message-cite-original
       message-citation-line-format "On %e %B %Y %R, %f wrote:\n")
+
+(setq mu4e-use-fancy-chars nil)
+
+(defun mu4e~write-body-to-html (msg)
+  "Write the body (either html or text) to a temporary file;
+return the filename."
+  (let* ((html (mu4e-message-field msg :body-html))
+         (txt (mu4e-message-field msg :body-txt))
+         (tmpfile (mu4e-make-temp-file "html"))
+         (attachments (remove-if (lambda (part)
+                                   (or (null (plist-get part :attachment))
+                                       (null (plist-get part :cid))))
+                                 (mu4e-message-field msg :parts))))
+    (unless (or html txt)
+      (mu4e-error "No body part for this message"))
+    (with-temp-buffer
+      (insert "<head><meta charset=\"UTF-8\"><style>body {display: none;}</style></head>\n")
+      (insert (or html (concat "<pre>" txt "</pre>")))
+      (write-file tmpfile)
+      ;; rewrite attachment urls
+      (mapc (lambda (attachment)
+              (goto-char (point-min))
+              (while (re-search-forward (format "src=\"cid:%s\""
+                                                (plist-get attachment :cid)) nil t)
+                (if (plist-get attachment :temp)
+                    (replace-match (format "src=\"%s\""
+                                           (plist-get attachment :temp)))
+                  (replace-match (format "src=\"%s%s\"" temporary-file-directory
+                                         (plist-get attachment :name)))
+                  (let ((tmp-attachment-name
+                         (format "%s%s" temporary-file-directory
+                                 (plist-get attachment :name))))
+                    (mu4e~proc-extract 'save (mu4e-message-field msg :docid)
+                                       (plist-get attachment :index)
+                                       mu4e-decryption-policy tmp-attachment-name)
+                    (mu4e-remove-file-later tmp-attachment-name)))))
+            attachments)
+      ;; Replce xhtml doctype with html; xhtml rendering seems to be broken in
+      ;; webkit2gtk.
+      (goto-char (point-min))
+      (while (re-search-forward "<!DOCTYPE html.*\\(XHTML\\|xhtml\\).*>" nil t)
+        (replace-match "<!DOCTYPE html>"))
+      (goto-char (point-min))
+      (while (re-search-forward "<html xmlns=\"http://www\\.w3\\.org/1999/xhtml\".*>" nil t)
+        (replace-match "<html>"))
+      (save-buffer)
+      tmpfile)))
+
+(defun get-string-from-file (filePath)
+  "Return filePath's file content."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (buffer-string)))
+
+(defun mu4e-xwidget-dark-mode ()
+  (interactive)
+  (xwidget-webkit-execute-script
+   (xwidget-webkit-current-session)
+   (get-string-from-file "~/.emacs.d/javascript/darkmode.js")))
+
+(defun mu4e-action-view-with-xwidget (msg)
+  "View the body of the message inside xwidget-webkit. This is
+only available in emacs 25+; also see the discussion of privacy
+aspects in `(mu4e) Displaying rich-text messages'."
+  (unless (fboundp 'xwidget-webkit-browse-url)
+    (mu4e-error "No xwidget support available"))
+  (xwidget-webkit-browse-url
+   (concat "file://" (mu4e~write-body-to-html msg)) t)
+  (mu4e-xwidget-dark-mode))
+
+(define-key xwidget-webkit-mode-map (kbd "d") 'mu4e-xwidget-dark-mode)
+
+(defvar xwidget-webkit-finished-loading-hook nil)
+
+(add-hook 'xwidget-webkit-finished-loading-hook 'mu4e-xwidget-dark-mode)
+
+(defun xwidget-webkit-callback (xwidget xwidget-event-type)
+  "Callback for xwidgets.
+XWIDGET instance, XWIDGET-EVENT-TYPE depends on the originating xwidget."
+  (if (not (buffer-live-p (xwidget-buffer xwidget)))
+      (xwidget-log
+       "error: callback called for xwidget with dead buffer")
+    (with-current-buffer (xwidget-buffer xwidget)
+      (cond ((eq xwidget-event-type 'load-changed)
+             (xwidget-webkit-execute-script
+              xwidget "document.title"
+              (lambda (title)
+                (xwidget-log "webkit finished loading: '%s'" title)
+                ;;TODO - check the native/internal scroll
+                ;;(xwidget-adjust-size-to-content xwidget)
+                (xwidget-webkit-adjust-size-to-window xwidget)
+                (rename-buffer (format "*xwidget webkit: %s *" title))
+                (run-hooks 'xwidget-webkit-finished-loading-hook)))
+             (pop-to-buffer (current-buffer)))
+            ((eq xwidget-event-type 'decide-policy)
+             (let ((strarg  (nth 3 last-input-event)))
+               (if (string-match ".*#\\(.*\\)" strarg)
+                   (xwidget-webkit-show-id-or-named-element
+                    xwidget
+                    (match-string 1 strarg)))))
+            ((eq xwidget-event-type 'javascript-callback)
+             (let ((proc (nth 3 last-input-event))
+                   (arg  (nth 4 last-input-event)))
+               (funcall proc arg)))
+            (t (xwidget-log "unhandled event:%s" xwidget-event-type))))))
+
+(defun xwidget-webkit-new-session (url)
+  "Create a new webkit session buffer with URL."
+  (let*
+      ((bufname (generate-new-buffer-name "*xwidget-webkit*"))
+       xw)
+    (setq xwidget-webkit-last-session-buffer (switch-to-buffer
+                                              (get-buffer-create bufname)))
+    ;; The xwidget id is stored in a text property, so we need to have
+    ;; at least character in this buffer.
+    (insert " ")
+    ;; Set the initial size to 0 to avoid the white canvas. It will be correctly resized later by the xwidget-webkit-adjust-size-to-window in xwidget-webkit-callback.
+    (setq xw (xwidget-insert 1 'webkit bufname 0 0))
+    (xwidget-put xw 'callback 'xwidget-webkit-callback)
+    (xwidget-webkit-mode)
+    (xwidget-webkit-goto-uri (xwidget-webkit-last-session) url)))
+
+(defun xwidget-webkit-forward ()
+  "Go forward in history."
+  (interactive)
+  (xwidget-webkit-execute-script (xwidget-webkit-current-session)
+                                 "history.go(1);"))
+
+(defun xwidget-webkit-get-current-url (proc)
+  "Get the current webkit url and pass it to PROC."
+  (xwidget-webkit-execute-script
+   (xwidget-webkit-current-session)
+   "document.URL;"
+   proc))
+
+
+(defun xwidget-webkit-open-current-url-in-default-browser ()
+  "Open the webkit url in the default browser."
+  (interactive)
+  (xwidget-webkit-get-current-url (lambda (url) (browse-url-default-browser url))))
+
+
+(define-key xwidget-webkit-mode-map "u" 'xwidget-webkit-current-url)
+(define-key xwidget-webkit-mode-map "U"
+  'xwidget-webkit-open-current-url-in-default-browser)
+(define-key xwidget-webkit-mode-map [mouse-8] 'xwidget-webkit-back)
+(define-key xwidget-webkit-mode-map [mouse-9] 'xwidget-webkit-forward)
+
+(defun mu4e-headers-search-exclude-sms
+    (&optional expr prompt edit ignore-history msgid show)
+  "Wrapper around mu4e-headers-search to prepend 'NOT maildir:/SMS' to EXPR."
+  (interactive)
+  (mu4e-headers-search (concat (or expr "") "NOT maildir:/SMS ")
+  prompt 't ignore-history msgid show))
+(define-key mu4e-headers-mode-map "s" 'mu4e-headers-search-exclude-sms)
+(define-key mu4e-main-mode-map "s" 'mu4e-headers-search-exclude-sms)
+(define-key mu4e-view-mode-map "s" 'mu4e-headers-search-exclude-sms)
