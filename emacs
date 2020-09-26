@@ -1,16 +1,24 @@
-;; ;(setq load-path (cons "~/.emacs.d" load-path))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; GC
 
-;; ;; Added by Package.el.  This must come before configurations of
-;; ;; installed packages.  Don't delete this line.  If you don't want it,
-;; ;; just comment it out by adding a semicolon to the start of the line.
-;; ;; You may delete these explanatory comments.
-;; (package-initialize)
+;; https://github.com/hlissner/doom-emacs/issues/310
+(setq gc-cons-threshold 402653184
+      gc-cons-percentage 0.6
+      file-name-handler-alist nil)
 
-(if (fboundp 'normal-top-level-add-subdirs-to-load-path)
-    (let* ((my-lisp-dir "~/.emacs.d/lisp/")
-           (default-directory my-lisp-dir))
-      (setq load-path (cons my-lisp-dir load-path))
-      (normal-top-level-add-subdirs-to-load-path)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; packages
+
+(load-file "~/.emacs.d/lisp/conf/packages-conf.el")
+
+(let ((default-directory "~/.emacs.d/lisp/"))
+  (setq load-path (cons default-directory load-path))
+  (normal-top-level-add-subdirs-to-load-path))
+
+;; https://github.com/joaotavora/yasnippet/issues/521
+(setq inhibit-default-init t)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;·keysyms
@@ -21,154 +29,11 @@
              (define-key input-decode-map "\e\e[A" [(meta up)])
              (define-key input-decode-map "\e\e[B" [(meta down)])
              (define-key input-decode-map "\e\e[C" [(meta right)])
-             (define-key input-decode-map "\e\e[D" [(meta left)])))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; CEDET
-
-;; ;; Load CEDET.
-;; ;; See cedet/common/cedet.info for configuration details.
-;; (load-file "~/.emacs.d/cedet-1.0pre7/common/cedet.el")
-;;(add-to-list 'load-path "/usr/share/emacs/site-lisp/cedet")
-
-;; ;; Enable EDE (Project Management) features
-;;(global-ede-mode 1)
-
-;; ;; Enable EDE for a pre-existing C++ project
-;; ;; (ede-cpp-root-project "NAME" :file "~/myproject/Makefile")
-
-;; ;; Enabling Semantic (code-parsing, smart completion) features
-;; ;; Select one of the following:
-
-;; ;; * This enables the database and idle reparse engines
-;; (semantic-load-enable-minimum-features)
-
-;; ;; * This enables some tools useful for coding, such as summary mode
-;; ;;   imenu support, and the semantic navigator
-;;(semantic-load-enable-code-helpers)
-
-;; ;; * This enables even more coding tools such as intellisense mode
-;; ;;   decoration mode, and stickyfunc mode (plus regular code helpers)
-;;  (semantic-load-enable-gaudy-code-helpers)
-
-;; ;; * This enables the use of Exuberent ctags if you have it installed.
-;; ;;   If you use C++ templates or boost, you should NOT enable it.
-;; ;; (semantic-load-enable-all-exuberent-ctags-support)
-;; ;;   Or, use one of these two types of support.
-;; ;;   Add support for new languges only via ctags.
-;; ;; (semantic-load-enable-primary-exuberent-ctags-support)
-;; ;;   Add support for using ctags as a backup parser.
-;; ;; (semantic-load-enable-secondary-exuberent-ctags-support)
-
-;; ;; Enable SRecode (Template management) minor-mode.
-;; ;; (global-srecode-minor-mode 1)
-;;(require 'semantic/sb)
-;;(require 'semantic-gcc)
-
-;; http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html
-(load-file "~/.emacs.d/lisp/cedet/cedet-devel-load.el")
-(load-file "~/.emacs.d/lisp/cedet/contrib/cedet-contrib-load.el")
-
-;; Semantic
-(add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
-(add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode)
-(add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode)
-;; (add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode)
-(add-to-list 'semantic-default-submodes 'global-semantic-decoration-mode)
-(add-to-list 'semantic-default-submodes 'global-semantic-highlight-func-mode)
-(add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
-(add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode)
-;; (add-to-list 'semantic-default-submodes 'global-cedet-m3-minor-mode)
-(add-to-list 'semantic-default-submodes 'global-semantic-idle-local-symbol-highlight-mode)
-;;(add-to-list 'semantic-default-submodes 'global-semantic-highlight-edits-mode)
-;;(add-to-list 'semantic-default-submodes 'global-semantic-show-unmatched-syntax-mode)
-;;(add-to-list 'semantic-default-submodes 'global-semantic-show-parser-state-mode)
-
-(setq semanticdb-default-save-directory (expand-file-name "~/.emacs.d/semanticdb"))
-(setq semanticdb-default-system-save-directory (expand-file-name "~/.emacs.d/semanticdb"))
-
-(semantic-mode 1)
-(global-semantic-idle-breadcrumbs-mode t)
-
-(require 'semantic/ia)
-(require 'semantic/bovine/gcc)
-
-
-;; To add some directory to list of system include paths, you can
-;; use the semantic-add-system-include command — it accepts two
-;; parameters: string with path to include files, and symbol,
-;; representing name of major mode, for which this path will be
-;; used. For example, to add Boost header files for C++ mode, you
-;; need to add following code:
-
-;; (semantic-add-system-include "~/exp/include/boost_1_37" 'c++-mode)
-
-
-;; http://sourceforge.net/p/cedet/mailman/message/27414242/
-(defvar semantic-tags-location-ring (make-ring 20))
-
-(defun semantic-goto-definition (point)
-  "Goto definition using semantic-ia-fast-jump
-save the pointer marker if tag is found"
-  (interactive "d")
-  (condition-case err
-      (progn
-        (ring-insert semantic-tags-location-ring (point-marker))
-        (semantic-ia-fast-jump point))
-    (error
-     ;;if not found remove the tag saved in the ring
-     (set-marker (ring-remove semantic-tags-location-ring 0) nil nil)
-     (signal (car err) (cdr err)))))
-
-(defun semantic-pop-tag-mark ()
-  "popup the tag save by semantic-goto-definition"
-  (interactive)
-  (if (ring-empty-p semantic-tags-location-ring)
-      (message "%s" "No more tags available")
-    (let* ((marker (ring-remove semantic-tags-location-ring 0))
-              (buff (marker-buffer marker))
-                 (pos (marker-position marker)))
-      (if (not buff)
-            (message "Buffer has been deleted")
-        (switch-to-buffer buff)
-        (goto-char pos))
-      (set-marker marker nil nil))))
-
-(defun my-cedet-hook ()
-  (local-set-key [(control return)] 'semantic-ia-complete-symbol-menu)
-  ;; (local-set-key "\C-c?" 'semantic-ia-complete-symbol)
-  ;; (local-set-key "\C-c>" 'semantic-complete-analyze-inline)
-  ;; (local-set-key "\C-c=" 'semantic-decoration-include-visit)
-  (local-set-key "\C-c j" 'semantic-goto-definition)
-  (local-set-key "\C-c J" 'semantic-pop-tag-mark)
-  (local-set-key "\C-c q" 'semantic-ia-show-doc)
-  (local-set-key "\C-c s" 'semantic-ia-show-summary)
-  (local-set-key "\C-c p" 'semantic-analyze-proto-impl-toggle)
-  (local-set-key "\C-c f" 'senator-fold-tag-toggle)
-  (local-set-key "\C-c \C-p" 'senator-previous-tag)
-  (local-set-key "\C-c \C-n" 'senator-next-tag)
-
-  (setq ac-sources (append '(ac-source-semantic ac-source-yasnippet) ac-sources))
-  )
-
-(add-hook 'c-mode-common-hook 'my-cedet-hook)
-(add-hook 'lisp-mode-hook 'my-cedet-hook)
-(add-hook 'emacs-lisp-mode-hook 'my-cedet-hook)
-(add-hook 'python-mode-hook 'my-cedet-hook)
-
-(defun my-c-mode-cedet-hook ()
-  ;; (local-set-key "." 'semantic-complete-self-insert)
-  ;; (local-set-key ">" 'semantic-complete-self-insert)
-  (local-set-key "\C-c h" 'eassist-switch-h-cpp)
-  (local-set-key "\C-c m" 'eassist-list-methods)
-  (local-set-key "\C-c \C-r" 'semantic-symref)
-
-  (add-to-list 'ac-sources 'ac-source-gtags)
-  (add-to-list 'ac-omni-completion-sources
-               (cons "\\." '(ac-source-semantic)))
-  )
-(add-hook 'c-mode-common-hook 'my-c-mode-cedet-hook)
-
+             (define-key input-decode-map "\e\e[D" [(meta left)])
+             (define-key input-decode-map "\e[1;5A" [(control up)])
+             (define-key input-decode-map "\e[1;5B" [(control down)])
+             (define-key input-decode-map "\e[1;5C" [(control right)])
+             (define-key input-decode-map "\e[1;5D" [(control left)])))
 
 ;; ;; Autocomplete
 (require 'auto-complete-config)
@@ -207,29 +72,13 @@ save the pointer marker if tag is found"
 ;;              (setq ac-sources '(ac-source-semantic ac-source-yasnippet))
 ;;              ))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ECB
-
-;;(add-to-list 'load-path "/usr/share/emacs/site-lisp/ecb")
-
-;;2. To load ecb at startup:
-;;(require 'ecb)
-;;- or -
-;;To load ecb first after starting it by ecb-activate:
-;;(require 'ecb-autoloads)
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; packages
-
-(setq package-user-dir "~/.emacs.d/lisp/elpa")
-(load-file "~/.emacs.d/lisp/conf/packages.el")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; function-args
 (fa-config-default)
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 (set-default 'semantic-case-fold t)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; custom lisp
@@ -239,18 +88,20 @@ save the pointer marker if tag is found"
 ;(load-file "~/.emacs.d/lisp/custom-lisp/emms-lastfm-scrobbler.el")
 ;(load-file "~/.emacs.d/lisp/custom-lisp/emms-get-lyrics.el")
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; private
 ;; passwords and the such
 
 (load-file "~/.emacs.d/lisp/conf/private.el")
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc functions
 
 (load-file "~/.emacs.d/lisp/conf/misc_funcs.el")
 
-;http://www.djcbsoftware.nl/dot-emacs.html
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; general settings
 
@@ -316,31 +167,6 @@ line instead."
 (set-input-method nil)                   ; no funky input for normal editing;
 (setq read-quoted-char-radix 10)         ; use decimal, not octal
 
-;start maximized
-;; (defun toggle-fullscreen ()
-;;   (interactive)
-;;   (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
-;;                          '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0))
-;;   (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
-;;                          '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0))
-;; )
-;;(run-with-idle-timer 0.1 nil 'toggle-fullscreen)
-;(toggle-fullscreen)
-
-;(defun toggle-fullscreen (&optional f)
-;      (interactive)
-;      (let ((current-value (frame-parameter nil 'fullscreen)))
-;           (set-frame-parameter nil 'fullscreen
-;                                (if (equal 'fullboth current-value)
-;                                    (if (boundp 'old-fullscreen) old-fullscreen nil)
-;                                    (progn (setq old-fullscreen current-value)
-;                                           'fullboth)))))
-;    (global-set-key [f11] 'toggle-fullscreen)
-    ; Make new frames fullscreen by default. Note: this hook doesn't do
-    ; anything to the initial frame if it's in your .emacs, since that file is
-    ; read _after_ the initial frame is created.
-;    (add-hook 'after-make-frame-functions 'toggle-fullscreen)
-
 (windmove-default-keybindings 'meta)
 
 ; for console:
@@ -373,19 +199,20 @@ line instead."
 
 (setq sentence-end-double-space nil)
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; the modeline
 ;;
 (line-number-mode t)                     ;; show line numbers
 (column-number-mode t)                   ;; show column numbers
 (size-indication-mode t)                 ;; show file size (emacs 22+)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; the minibuffer
 ;;
 (setq
-  enable-recursive-minibuffers t         ;;  allow mb cmds in the mb
+  enable-recursive-minibuffers t
   max-mini-window-height 5
   minibuffer-scroll-window nil
   resize-mini-windows t)
@@ -396,6 +223,7 @@ line instead."
   icomplete-prospects-height 1           ;; don't spam my minibuffer
   icomplete-compute-delay 0)             ;; don't wait
 (require 'icomplete+ nil 'noerror)       ;; drew adams' extras
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -413,16 +241,6 @@ line instead."
 (when (fboundp 'global-hl-line-mode)
   (global-hl-line-mode t)) ;; turn it on for all modes by default
 
-
-;; overrride the default function....
-(defun emacs-session-filename (SESSION-ID)
-  (concat "~/.emacs.d/cache/session." SESSION-ID))
-
-;; saveplace: save location in file when saving files
-(setq save-place-file "~/.emacs.d/cache/saveplace")
-(setq-default save-place t)            ;; activate it for all buffers
-(require 'saveplace)                   ;; get the package
-
 (setq ispell-program-name "aspell"
   ispell-extra-args '("--sug-mode=ultra"))
 
@@ -430,6 +248,7 @@ line instead."
 (global-undo-tree-mode)
 
 (require 'hippie-exp)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some misc other packages
@@ -454,7 +273,7 @@ line instead."
 (require 'misc)
 (global-set-key "\M-z" 'zap-up-to-char)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; global keybindings
 ;;
@@ -502,26 +321,23 @@ line instead."
 
 (global-set-key (kbd "C-c d") 'djcb-dup)
 
-(when (fboundp 'fullscreen-toggle)
-  (global-set-key (kbd "C-<f11>") 'fullscreen-toggle))
-
-(when (fboundp 'multi-term-dedicated-toggle)
-  (global-set-key (kbd "C-<f12>") 'multi-term-dedicated-toggle)) ; multi-term
-
 (global-set-key (kbd "<f25>") 'browse-url-firefox)
 
 (global-set-key (kbd "C-x C-S-e") 'eval-and-replace)
 
 ;; program shortcuts
 (global-set-key (kbd "C-c E") ;; .emacs
-  (lambda()(interactive)(find-file "~/.emacs")))
+                (lambda()
+                  (interactive)
+                  (find-file "~/.emacs")
+                  (emacs-lisp-mode)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; global editor settings
 
 (setq-default indent-tabs-mode nil)
-(setq-default tab-width 4)
+(setq-default tab-width 2)
 
 (autoload 'linum-mode "linum" "mode for line numbers" t)
 
@@ -529,40 +345,28 @@ line instead."
 (setq whitespace-style
         '(face tabs spaces newline space-mark tab-mark newline-mark indentation space-after-tab space-before-tab))
 (global-whitespace-mode)
-(global-linum-mode) ;)
 
-(add-hook 'linum-before-numbering-hook
-  (lambda ()
-    (let ((w (length (number-to-string (count-lines (point-min) (point-max))))))
-      (setq linum-format
-            `(lambda (line)
-               (propertize (concat
-                            (truncate-string-to-width
-                             "" (- ,w (length (number-to-string line)))
-                             nil ?\x2007)
-                            (number-to-string line))
-                           'face 'linum))))))
+(global-display-line-numbers-mode)
 
-
-;disable backup
 (setq backup-inhibited t)
-;disable auto save
 (setq auto-save-default nil)
+
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Python
 
-(autoload 'python-mode "python-mode.el" "Python mode." t)
-(setq auto-mode-alist (append '(("/*.\.py$" . python-mode)) auto-mode-alist))
+(setq-default python-indent-offset 2)
 
-;;; bind RET to py-newline-and-indent
-;; (add-hook 'python-mode-hook '(lambda ()
-;;     (define-key python-mode-map "C-m" 'newline-and-indent)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; cscope
 
 (require 'xcscope)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; C
@@ -591,6 +395,7 @@ line instead."
 
 (setq auto-mode-alist (append '(("/*.\.cu$" . c++-mode)) auto-mode-alist))
 ; (setq cscope-indexer-suffixes (cons "*.cu" cscope-indexer-suffixes))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Haskell
@@ -659,148 +464,7 @@ line instead."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Org-Mode
 
-;(require 'org-install)
-(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-(global-set-key "\C-cl" 'org-store-link)
-(global-set-key "\C-cc" 'org-capture)
-(global-set-key "\C-ca" 'org-agenda)
-(global-set-key "\C-cb" 'org-iswitchb)
-
-;; active Babel languages
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((C . t)
-   (python . t)
-   (lisp . t)
-   (latex . t)
-   (sh . t)
-   (lisp . t)
-   ))
-
-(setq org-log-done 'note)
-(setq org-log-done 'time)
-(setq org-todo-keywords
-'((sequence "TODO(t)" "STARTED(s@/!)" "WAITING(w@/!)" "DELEGATED(e@/!)" "APPT(@!)" "|" "DONE(d!)" "DEFERRED" "CANCELLED(c@)")))
-
-(eval-after-load "org-agenda"
-  '(progn
-     (define-prefix-command 'org-todo-state-map)
-     (define-key org-mode-map "\C-cx" 'org-todo-state-map)
-     (define-key org-todo-state-map "x"
-       #'(lambda nil (interactive) (org-todo "CANCELED")))
-     (define-key org-todo-state-map "d"
-       #'(lambda nil (interactive) (org-todo "DONE")))
-     (define-key org-todo-state-map "f"
-       #'(lambda nil (interactive) (org-todo "DEFERRED")))
-     (define-key org-todo-state-map "l"
-       #'(lambda nil (interactive) (org-todo "DELEGATED")))
-     (define-key org-todo-state-map "s"
-       #'(lambda nil (interactive) (org-todo "STARTED")))
-     (define-key org-todo-state-map "w"
-       #'(lambda nil (interactive) (org-todo "WAITING")))))
-
-(require 'remember)
-(add-hook 'remember-mode-hook 'org-remember-apply-template)
-(define-key global-map [(control meta ?r)] 'remember)
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(auto-insert (quote t))
- '(auto-insert-alist
-   (quote
-    ((("\\.\\(h\\|hpp\\)\\'" . "C / C++ header")
-      .
-      ["skeleton.h" c++-mode my/autoinsert-yas-expand])
-     (("\\.c\\'" . "C source")
-      .
-      ["skeleton.c" my/autoinsert-yas-expand])
-     (("\\.cpp\\'" . "C++ source")
-      .
-      ["skeleton.cpp" my/autoinsert-yas-expand])
-     (("\\.sh\\'" . "Shell script")
-      .
-      ["skeleton.sh" my/autoinsert-yas-expand])
-     (("\\.el\\'" . "Emacs Lisp")
-      .
-      ["skeleton.el" my/autoinsert-yas-expand])
-     (("\\.py\\'" . "Python script")
-      .
-      ["skeleton.py" my/autoinsert-yas-expand])
-     (("[mM]akefile\\'" . "Makefile")
-      .
-      ["Makefile" my/autoinsert-yas-expand])
-     (("\\.tex\\'" . "TeX/LaTeX")
-      .
-      ["skeleton.tex" my/autoinsert-yas-expand]))))
- '(org-agenda-custom-commands
-   (quote
-    (("d" todo "DELEGATED" nil)
-     ("c" todo "DONE|DEFERRED|CANCELLED" nil)
-     ("w" todo "WAITING" nil)
-     ("W" agenda ""
-      ((org-agenda-ndays 21)))
-     ("A" agenda ""
-      ((org-agenda-skip-function
-        (lambda nil
-          (org-agenda-skip-entry-if
-           (quote notregexp)
-           "\\=.*\\[#A\\]")))
-       (org-agenda-ndays 1)
-       (org-agenda-overriding-header "Today's Priority #A tasks: ")))
-     ("u" alltodo ""
-      ((org-agenda-skip-function
-        (lambda nil
-          (org-agenda-skip-entry-if
-           (quote scheduled)
-           (quote deadline)
-           (quote regexp)
-           "
-]+>")))
-       (org-agenda-overriding-header "Unscheduled TODO entries: "))))))
- '(org-agenda-files (quote ("~/Dropbox/org/todo.org")))
- '(org-agenda-ndays 7)
- '(org-agenda-show-all-dates t)
- '(org-agenda-skip-deadline-if-done t)
- '(org-agenda-skip-scheduled-if-done t)
- '(org-agenda-start-on-weekday nil)
- '(org-deadline-warning-days 14)
- '(org-default-notes-file "~/Dropbox/org/notes.org")
- '(org-directory "~/Dropbox/org")
- '(org-fast-tag-selection-single-key (quote expert))
- '(org-mobile-inbox-for-pull "~/Dropbox/org/todo.org")
- '(org-remember-store-without-prompt t)
- '(org-remember-templates
-   (quote
-    ((116 "* TODO %?
-  %u" "~/Dropbox/org/todo.org" "Tasks")
-     (110 "* %u %?" "~/Dropbox/org/notes.org" "Notes"))))
- '(org-reverse-note-order t)
- '(package-selected-packages
-   (quote
-    (emms-player-mpv offlineimap rust-mode rustfmt jabber smart-tab scala-mode2 google-contacts doc-mode color-theme clojure-mode auto-complete-chunk auto-complete-c-headers auto-complete-auctex auctex apache-mode)))
- '(remember-annotation-functions (quote (org-remember-annotation)))
- '(remember-handler-functions (quote (org-remember-handler))))
-
-
-
-
-;; ;; TODO keyword faces
-;; (setq org-todo-keyword-faces
-;;       '(("PBUG" . (:background "gold" :foreground "indianred3" :weight bold))
-;;     ("CBUG" . (:background "gold" :foreground "indianred3" :weight bold))
-;;     ("SEGF" . (:background "gold" :foreground "indianred3" :weight bold))
-;;     ("CNCL" . (:background "snow3" :foreground "black" :weight bold))
-;;     ))
-
-;; ;; TAG faces
-;; (setq org-tag-faces
-;;       '(("PROJ" :background "indianred3" :foreground "cornsilk2" :weight bold)
-;;     ))
-
-(setq org-mobile-directory "~/Dropbox/org/mobileorg")
+(load-file "~/.emacs.d/lisp/conf/org-conf.el")
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -809,10 +473,12 @@ line instead."
 (autoload 'no-word "no-word" "word to txt")
 (add-to-list 'auto-mode-alist '("\\.doc\\'" . no-word))
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; EMMS
 
 (load-file "~/.emacs.d/lisp/conf/emms-conf.el")
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gnuplot
@@ -925,6 +591,7 @@ line instead."
 ;; (global-set-key (kbd "<3270_PA1>") 'goto-match-paren)
 ;; (global-set-key (kbd "C-<menu>") 'goto-match-paren)
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcitons
 
@@ -1001,10 +668,12 @@ line instead."
 (setq common-lisp-hyperspec-root "/usr/share/doc/HyperSpec/")
 (global-set-key (kbd "<f5>") 'hyperspec-lookup)
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ERC
 
 (load-file "~/.emacs.d/lisp/conf/erc_conf.el")
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; themes
@@ -1014,16 +683,20 @@ line instead."
 
 (set-face-attribute 'default nil :height 100)
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; initial frames
 
 (make-frame-command)
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Window/Frame Manager
 
 (load-file "~/.emacs.d/lisp/conf/three-windows.el")
+; https://www.emacswiki.org/emacs/TransposeFrame
 (require 'transpose-frame)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; git
@@ -1054,6 +727,7 @@ line instead."
 (setq term-default-bg-color nil)
 (setq term-default-fg-color "green")
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; generic-modes
 
@@ -1076,6 +750,7 @@ line instead."
 ;;          (hippie-expand nil))
 ;;         (t (indent-for-tab-command))))
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; smart tab
 
@@ -1091,7 +766,10 @@ line instead."
         (mu4e-compose-mode . completion-at-point)
         (clojure-mode . slime-complete-symbol)
         (lisp-mode . slime-complete-symbol)
-        (matlab-shell-mode . matlab-shell-tab))) ;; see update below
+        (matlab-shell-mode . matlab-shell-tab) ;; see update below
+        (rust-mode . completion-at-point)
+        ))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mode Line
@@ -1108,6 +786,7 @@ line instead."
   (lambda()
     (setq mode-name "el"))) 
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tramp
 
@@ -1115,6 +794,7 @@ line instead."
 (setq tramp-shell-prompt-pattern
       (concat (if (featurep 'xemacs) "" "\\(?:^\\|\r\\)")
               "[^#$%>\n]*#?[#$%>] *\\(\e\\[[0-9;]*[a-zA-Z] *\\)*"))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; sudo editing
@@ -1173,6 +853,7 @@ line instead."
 
 (add-hook 'find-file-root-hook 'find-file-root-header-warning)
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; fixed point completion
 ;; currently broken in minibuffer:
@@ -1182,11 +863,13 @@ line instead."
 ;; (load "~/.emacs.d/lisp/fixed-point-completion/fixed-point-completion.el")
 ;; (enable-fixed-point-completions)
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; e-sink
 
 (load "~/.emacs.d/lisp/e-sink/e-sink.el")
 (require 'e-sink)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; matlab
@@ -1194,6 +877,7 @@ line instead."
 ;; (add-to-list 'load-path "~/.emacs.d/matlab-emacs")
 (load-library "matlab-load")
 (add-to-list 'auto-mode-alist '("\\.m$" . matlab-mode))4
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; yasnippet
@@ -1203,6 +887,7 @@ line instead."
 ;; (mapc 'yas/load-directory yas/root-directory)
 (add-to-list 'hippie-expand-try-functions-list 'yas/hippie-try-expand)
 (yas/global-mode 1)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; autoinsert
@@ -1305,6 +990,7 @@ line instead."
                                (interactive)
                                (switch-to-buffer "*-jabber-roster-*")))
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ocaml
 
@@ -1312,15 +998,18 @@ line instead."
 (autoload 'tuareg-mode "tuareg" "Major mode for editing Caml code" t)
 (autoload 'ocamldebug "ocamldebug" "Run the Caml debugger" t)
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; clojure
 
 (require 'clojure-mode)
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; JavaScript
 
 (setq js-indent-level 2)
+
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ;; voice
@@ -1361,6 +1050,7 @@ line instead."
 
 (sauron-start)
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; google-contacts
 
@@ -1369,6 +1059,7 @@ line instead."
 ;; (require 'google-contacts-message)
 ;; (add-hook 'completion-at-point-functions 'google-contacts-message-complete-function)
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; mu4e
 
@@ -1376,6 +1067,7 @@ line instead."
 
 
 ;; (festival-say "emacs initialized")
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; which-function
@@ -1411,3 +1103,390 @@ line instead."
 ; (setq tramp-use-ssh-controlmaster-options nil)
 ; (setq server-use-tcp t
 ;       server-port    9999)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(auto-insert (quote t))
+ '(auto-insert-alist
+   (quote
+    ((("\\.\\(h\\|hpp\\)\\'" . "C / C++ header")
+      .
+      ["skeleton.h" c++-mode my/autoinsert-yas-expand])
+     (("\\.c\\'" . "C source")
+      .
+      ["skeleton.c" my/autoinsert-yas-expand])
+     (("\\.cpp\\'" . "C++ source")
+      .
+      ["skeleton.cpp" my/autoinsert-yas-expand])
+     (("\\.sh\\'" . "Shell script")
+      .
+      ["skeleton.sh" my/autoinsert-yas-expand])
+     (("\\.el\\'" . "Emacs Lisp")
+      .
+      ["skeleton.el" my/autoinsert-yas-expand])
+     (("\\.py\\'" . "Python script")
+      .
+      ["skeleton.py" my/autoinsert-yas-expand])
+     (("[mM]akefile\\'" . "Makefile")
+      .
+      ["Makefile" my/autoinsert-yas-expand])
+     (("\\.tex\\'" . "TeX/LaTeX")
+      .
+      ["skeleton.tex" my/autoinsert-yas-expand]))))
+ '(help-at-pt-display-when-idle (quote (flymake-diagnostic)) nil (help-at-pt))
+ '(help-at-pt-timer-delay 0.1)
+ '(org-agenda-custom-commands
+   (quote
+    (("d" todo "DELEGATED" nil)
+     ("c" todo "DONE|DEFERRED|CANCELLED" nil)
+     ("w" todo "WAITING" nil)
+     ("W" agenda ""
+      ((org-agenda-ndays 21)))
+     ("A" agenda ""
+      ((org-agenda-skip-function
+        (lambda nil
+          (org-agenda-skip-entry-if
+           (quote notregexp)
+           "\\=.*\\[#A\\]")))
+       (org-agenda-ndays 1)
+       (org-agenda-overriding-header "Today's Priority #A tasks: ")))
+     ("u" alltodo ""
+      ((org-agenda-skip-function
+        (lambda nil
+          (org-agenda-skip-entry-if
+           (quote scheduled)
+           (quote deadline)
+           (quote regexp)
+           "
+]+>")))
+       (org-agenda-overriding-header "Unscheduled TODO entries: "))))))
+ '(org-agenda-files nil)
+ '(org-agenda-ndays 7)
+ '(org-agenda-show-all-dates t)
+ '(org-agenda-skip-deadline-if-done t)
+ '(org-agenda-skip-scheduled-if-done t)
+ '(org-agenda-start-on-weekday nil)
+ '(org-deadline-warning-days 14)
+ '(org-default-notes-file "~/Dropbox/org/notes.org")
+ '(org-directory "~/Dropbox/org")
+ '(org-fast-tag-selection-single-key (quote expert))
+ '(org-mobile-inbox-for-pull "~/Dropbox/org/todo.org")
+ '(org-remember-store-without-prompt t)
+ '(org-remember-templates
+   (quote
+    ((116 "* TODO %?
+  %u" "~/Dropbox/org/todo.org" "Tasks")
+     (110 "* %u %?" "~/Dropbox/org/notes.org" "Notes"))))
+ '(org-reverse-note-order t)
+ '(remember-annotation-functions (quote (org-remember-annotation)))
+ '(remember-handler-functions (quote (org-remember-handler))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; dired
+
+(load-file "~/.emacs.d/lisp/conf/dired-conf.el")
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; loccur
+
+(require 'loccur)
+;; ;; defines shortcut for loccur of the current word
+;; (define-key global-map [(control o)] 'loccur-current)
+;; ;; defines shortcut for the interactive loccur command
+;; (define-key global-map [(control meta o)] 'loccur)
+;; ;; defines shortcut for the loccur of the previously found word
+;; (define-key global-map [(control shift o)] 'loccur-previous-match)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; mentor
+
+(require 'mentor)
+
+(defconst mentor-rpc-volatile-d-methods
+  '("d.local_id" ;; must not be removed
+    "d.base_path"        "d.bytes_done"
+    "d.directory"        "d.down.rate"
+    "d.hashing"          "d.hashing_failed"
+    "d.message"
+    "d.priority"         "d.chunk_size"
+    "d.up.rate"          "d.up.total"
+    "d.state"            "d.views"
+    "d.is_active"        "d.is_hash_checked"
+    "d.is_hash_checking" "d.is_open"
+    "d.is_pex_active"
+    ;; "cat=\"$t.multicall=d.hash=,t.url=,cat=#,t.type=,cat=#,t.is_enabled=,cat=#,t.group=,cat=#,t.scrape_complete=,cat=#,t.scrape_incomplete=,cat=#,t.scrape_downloaded=,cat=#\""
+    ))
+
+(defconst mentor-rpc-t-methods
+  '("t.url"
+    "t.type" "t.is_enabled"
+    "t.group" "t.scrape_complete"
+    "t.scrape_incomplete" "t.scrape_downloaded"))
+
+
+
+(defun mentor-download-tracker-name-column (&optional download)
+  (let* ((t_urls (mentor-item-property 't_url download))
+         (t_is_enableds (mentor-item-property 't_is_enabled download))
+         (active-trackers
+          (cl-mapcar (lambda (url is_enabled) (when is_enabled url))
+                     t_urls t_is_enableds))
+         (main-tracker (if active-trackers (car active-trackers) ""))
+         (shortened (mentor-remove-subdomains
+                     (mentor-keep-domain-name main-tracker))))
+    (if (>= (length shortened) 20)
+        (seq-subseq shortened -20)
+      (format "%20s" shortened))))
+
+(defun mentor-rpc-methods-to-properties (methods)
+  (mapcar
+   (lambda (method)
+     (intern
+      (replace-regexp-in-string
+       "^\\([tp]\\)\\." "\\1_"
+       (replace-regexp-in-string "^[df]\\.\\(get_\\)?\\|=$" "" method))))
+   methods))
+
+(defun mentor-join-t-methods (methods)
+  (when methods
+    (concat "cat=\"$t.multicall=d.hash=,"
+            (mapconcat (lambda (m) (concat m "=,cat=#")) methods ",")
+            "\"")))
+
+(defun mentor-download-data-update-all ()
+  (message "Updating torrent data...")
+  (condition-case _err
+      (progn
+        (mentor-rpc-d.multicall mentor-rpc-volatile-d-methods mentor-rpc-t-methods)
+        (message "Updating torrent data...DONE"))
+    (mentor-need-init
+     (mentor-download-data-init))))
+
+(defun mentor-download-data-init ()
+  "Initialize torrent data from rtorrent.
+
+All torrent information will be re-fetched, making this an
+expensive operation."
+  (message "Initializing torrent data...")
+  (mentor-rpc-d.multicall mentor-rpc-d-methods mentor-rpc-t-methods t)
+  (mentor-views-update-views)
+  (message "Initializing torrent data... DONE"))
+
+(defun mentor-rpc-d.multicall (d-methods t-methods &optional is-init)
+  "Call `d.multicall2' with METHODS.
+
+  Optional argument IS-INIT if this is initializing."
+  (let* ((d-methods=
+          (mapcar (lambda (m) (concat m "=")) d-methods))
+         (t-methods= (list (mentor-join-t-methods t-methods)))
+         (all-methods (append d-methods= t-methods=))
+         (list-of-values (apply 'mentor-rpc-command "d.multicall2"
+                                "" mentor-current-view all-methods)))
+    ;; (print list-of-values (create-file-buffer "mtmp2"))
+    (mentor-view-torrent-list-clear)
+    (let ((d-properties (mentor-rpc-methods-to-properties d-methods))
+          (t-properties (mentor-rpc-methods-to-properties t-methods)))
+      (dolist (values list-of-values)
+        (mentor-download-update-from d-properties t-properties values is-init)))))
+
+(defun mentor-download-update-from (d-methods t-methods values &optional is-init)
+  (let ((result ())
+        (d-values (butlast values))
+        (t-values (butlast (split-string (car (last values)) "#")))
+        (t-methods-len (length t-methods))
+        (t-accum ()))
+    (cl-mapc (lambda (m v) (push (cons m v) result)) d-methods d-values)
+    ;; (print t-accum (create-file-buffer "mtmp5"))
+    ;; (print t-values (create-file-buffer "mtmp7"))
+    (while t-values
+      (push (cl-subseq t-values 0 t-methods-len) t-accum)
+      (setq t-values (nthcdr t-methods-len t-values))
+      ;; (message "il: %s; %s" t-accum t-values)
+      )
+    ;; (print t-accum (create-file-buffer "mtmp6"))
+    (setq t-accum (nreverse t-accum))
+    ;; (message "tac: %s" t-accum)
+    (setq t-accum (apply #'cl-mapcar #'list t-accum))
+    ;; (print t-accum (create-file-buffer "mtmp8"))
+    (cl-mapc (lambda (m v) (push (cons m v) result)) t-methods t-accum)
+    (mentor-download-update
+     (mentor-download-create result)
+      is-init)))
+
+(setq mentor-view-columns
+      '(((mentor-download-state-column) -2 "State" mentor-download-state)
+        ((mentor-download-speed-up-column) -5 "Up" mentor-download-speed-up)
+        ((mentor-download-speed-down-column) -5 "Down" mentor-download-speed-down)
+        ((mentor-download-progress-column) -3 "Cmp" mentor-download-progress)
+        ((mentor-download-size-column) -4 "Size" mentor-download-size)
+        (name -100 "Name" mentor-download-name)
+        ((mentor-download-tracker-name-column) -20 "Tracker" mentor-tracker-name)
+        (message -40 "Message" mentor-download-message)
+        (directory -255 "Directory")))
+
+;; ssh -X wuzzy@wuzzy -L 5001:/var/rtorrent/.scgi_loca
+(setq mentor-rtorrent-external-rpc "scgi://127.0.0.1:5000")
+
+(defun mentor ()
+  "Start mentor or switch to mentor buffer."
+  (interactive)
+  (if (get-buffer "*mentor*")
+      ;; Assume that it's set up correctly if it exists
+      (switch-to-buffer (get-buffer-create "*mentor*"))
+    ;; Otherwise create and set it up
+    (switch-to-buffer (get-buffer-create "*mentor*"))
+    (mentor-mode)
+    (mentor-setup-rtorrent)
+    ;; (setq mentor-item-update-this-fun 'mentor-download-update-this)
+    (setq mentor-item-update-this-fun 'mentor-download-update-and-reinsert-at-point)
+    (setq mentor-set-priority-fun 'mentor-download-set-priority-fun)
+    (setq mentor--columns-var  'mentor-view-columns)
+    (setq mentor-sort-list '((up.rate . t) name))
+    (setq mentor-rtorrent-client-version (mentor-rpc-command "system.client_version")
+          mentor-rtorrent-library-version (mentor-rpc-command "system.library_version")
+          mentor-rtorrent-name (mentor-rpc-command "session.name"))
+    ;; (let* ((pwd-with-trailing-newline (mentor-rpc-command "execute.capture" "" "pwd"))
+    ;;        (pwd (substring pwd-with-trailing-newline 0 -1)))
+    ;;   (cd (file-name-as-directory pwd)))
+    (mentor-set-view mentor-default-view)
+    (when (equal mentor-current-view mentor-last-used-view)
+      (setq mentor-last-used-view (mentor-get-custom-view-name 2)))
+    (mentor-download-data-init)
+    (mentor-views-init)
+    (mentor-redisplay)
+    (mentor-init-header-line)
+    (goto-char (point-min))))
+
+;; (defun url-scgi (url callback cbargs)
+;;   "Handle SCGI URLs from internal Emacs functions."
+;;   (cl-check-type url url "Need a pre-parsed URL.")
+;;   (declare (special url-scgi-connection-opened
+;;                     url-callback-function
+;;                     url-callback-arguments
+;;                     url-current-object))
+
+;;   (let* ((host (url-host url))
+;;          (port (url-port url))
+;;          (filename (url-filename url))
+;;          (is-local-socket (string-match "^/." filename))
+;;          (bufname (format " *scgi %s*" (if is-local-socket
+;;                                            filename
+;;                                          (format "%s:%d" host port))))
+;;          (buffer (generate-new-buffer bufname))
+;;          (connection (cond
+;;                       (is-local-socket
+;;                        (let ((filename (url-scgi-handle-home-dir filename)))
+;;                         (make-network-process :name "scgi"
+;;                                               :buffer buffer
+;;                                               :remote filename)))
+;;                       (t ; scgi over tcp
+;;                        (url-open-stream host buffer host port)))))
+;;     (if (not connection)
+;;         ;; Failed to open the connection for some reason
+;;         (progn
+;;           (kill-buffer buffer)
+;;           (setq buffer nil)
+;;           (error "Could not create connection to %s:%d" host port))
+;;       (with-current-buffer buffer
+;;         (setq url-current-object url
+;;               mode-line-format "%b [%s]")
+
+;;         (dolist (var '(url-scgi-connection-opened
+;;                        url-callback-function
+;;                        url-callback-arguments))
+;;           (set (make-local-variable var) nil))
+
+;;         (setq url-callback-function callback
+;;               url-callback-arguments cbargs
+;;               url-scgi-connection-opened nil)
+
+;;         (pcase (process-status connection)
+;;           (`connect
+;;            ;; Asynchronous connection
+;;            (set-process-sentinel connection 'url-scgi-async-sentinel))
+;;           (`failed
+;;            ;; Asynchronous connection failed
+;;            (error "Could not create connection to %s:%d" host port))
+;;           (_
+;;            (setq url-scgi-connection-opened t)
+;;            (process-send-string connection (url-scgi-create-request))))))
+;;     buffer))
+
+;; TODO: do this with a bulk rpc and parse it
+(defun mentor-download-update-this ()
+  (let* ((tor (mentor-get-item-at-point))
+         (hash (mentor-item-property 'hash tor))
+         (methods (append mentor-rpc-volatile-d-methods mentor-rpc-t-methods))
+         (values (cl-mapcar
+                  (lambda (method)
+                    (mentor-rpc-command method hash))
+                  methods)))
+    (let ((d-properties (mentor-rpc-methods-to-properties methods))
+          (t-properties (mentor-rpc-methods-to-properties t-methods)))
+      (mentor-download-update-from d-properties t-properties values))
+    (mentor-redisplay-torrent)
+    (mentor-goto-item-name-column)))
+
+;; TODO: make compatible with emacs which don't have display-linue-numbers.
+(defun mentor-reload-header-line ()
+  (setq mentor--header-line
+        (concat
+         (make-string (1+ (line-number-display-width)) ?\s)
+         (mentor-process-view-header-columns (eval mentor--columns-var)))))
+
+;; TODO: file details... open dir in dired
+
+;; TODO: define mentor-sort-by-property-promt to sort by Cmp, might be inspired
+;; by sunrise commander sort
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Rust
+
+(setq rust-indent-offset 2)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Help
+
+(setq help-window-select t)
+
+;; Note that the built-in `describe-function' includes both functions
+;; and macros. `helpful-function' is functions only, so we provide
+;; `helpful-callable' as a drop-in replacement.
+(global-set-key (kbd "C-h f") #'helpful-callable)
+(global-set-key (kbd "C-h v") #'helpful-variable)
+(global-set-key (kbd "C-h k") #'helpful-key)
+
+;; Lookup the current symbol at point. C-c C-d is a common keybinding
+;; for this in lisp modes.
+(global-set-key (kbd "C-c C-d") #'helpful-at-point)
+
+;; Look up *F*unctions (excludes macros).
+;;
+;; By default, C-h F is bound to `Info-goto-emacs-command-node'. Helpful
+;; already links to the manual, if a function is referenced there.
+(global-set-key (kbd "C-h F") #'helpful-function)
+
+;; Look up *C*ommands.
+;;
+;; By default, C-h C is bound to describe `describe-coding-system'. I
+;; don't find this very useful, but it's frequently useful to only
+;; look at interactive functions.
+(global-set-key (kbd "C-h C") #'helpful-command)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; GC
+
+;; after startup, it is important you reset this to some reasonable default. A large 
+;; gc-cons-threshold will cause freezing and stuttering during long-term 
+;; interactive use. I find these are nice defaults:
+(add-hook 'emacs-startup-hook
+  (setq gc-cons-threshold 16777216
+        gc-cons-percentage 0.1))
