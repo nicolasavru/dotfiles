@@ -148,21 +148,6 @@
 (add-to-list 'mu4e-view-actions
   '("ViewInBrowser" . mu4e-action-view-in-browser) t)
 
-(add-to-list 'mu4e-view-actions
-             '("xViewXWidget" . mu4e-action-view-with-xwidget) t)
-
-(remove-hook 'kill-buffer-query-functions #'xwidget-kill-buffer-query-function)
-(define-key xwidget-webkit-mode-map (kbd "q")
-  (lambda () (interactive) (quit-window t)))
-
-;; adapt webkit according to window configuration chagne automatically
-;; without this hook, every time you change your window configuration,
-;; you must press 'a' to adapt webkit content to new window size
-(add-hook 'window-configuration-change-hook (lambda ()
-               (when (equal major-mode 'xwidget-webkit-mode)
-                 (xwidget-webkit-adjust-size-dispatch))))
-
-
 
 (setq cucc-label-search (concat "maildir:/Cooper/CUCC/ateam@cooper.edu"
                                 " OR "
@@ -221,9 +206,26 @@
 
 (setq mu4e-headers-fields '((:human-date . 10)
                             (:flags . 6)
+                            (:maildir . 10)
                             (:mailing-list . 10)
                             (:from-or-to . 22)
+                            (:size . 6)
                             (:subject)))
+(setq mu4e-headers-visible-columns 150)
+
+(setq mu4e-view-fields '(:from
+                         :to
+                         :cc
+                         :subject
+                         :flags
+                         :date
+                         :maildir
+                         :size
+                         :mailing-list
+                         :tags
+                         :attachments
+                         :signature
+                         :decryption))
 
 (setq mu4e-headers-date-format "%Y-%m-%d")
 (setq mu4e-headers-time-format "%T")
@@ -310,7 +312,6 @@ return the filename."
     (unless (or html txt)
       (mu4e-error "No body part for this message"))
     (with-temp-buffer
-      (insert "<head><meta charset=\"UTF-8\"><style>body {display: none;}</style></head>\n")
       (insert (or html (concat "<pre>" txt "</pre>")))
       (write-file tmpfile)
       ;; rewrite attachment urls
@@ -348,100 +349,6 @@ return the filename."
     (insert-file-contents filePath)
     (buffer-string)))
 
-(defun mu4e-xwidget-dark-mode ()
-  (interactive)
-  (xwidget-webkit-execute-script
-   (xwidget-webkit-current-session)
-   (get-string-from-file "~/.emacs.d/javascript/darkmode.js")))
-
-(defun mu4e-action-view-with-xwidget (msg)
-  "View the body of the message inside xwidget-webkit. This is
-only available in emacs 25+; also see the discussion of privacy
-aspects in `(mu4e) Displaying rich-text messages'."
-  (unless (fboundp 'xwidget-webkit-browse-url)
-    (mu4e-error "No xwidget support available"))
-  (xwidget-webkit-browse-url
-   (concat "file://" (mu4e~write-body-to-html msg)) t)
-  (mu4e-xwidget-dark-mode))
-
-(define-key xwidget-webkit-mode-map (kbd "d") 'mu4e-xwidget-dark-mode)
-
-(defvar xwidget-webkit-finished-loading-hook nil)
-
-(add-hook 'xwidget-webkit-finished-loading-hook 'mu4e-xwidget-dark-mode)
-
-(defun xwidget-webkit-callback (xwidget xwidget-event-type)
-  "Callback for xwidgets.
-XWIDGET instance, XWIDGET-EVENT-TYPE depends on the originating xwidget."
-  (if (not (buffer-live-p (xwidget-buffer xwidget)))
-      (xwidget-log
-       "error: callback called for xwidget with dead buffer")
-    (with-current-buffer (xwidget-buffer xwidget)
-      (cond ((eq xwidget-event-type 'load-changed)
-             (xwidget-webkit-execute-script
-              xwidget "document.title"
-              (lambda (title)
-                (xwidget-log "webkit finished loading: '%s'" title)
-                ;;TODO - check the native/internal scroll
-                ;;(xwidget-adjust-size-to-content xwidget)
-                (xwidget-webkit-adjust-size-to-window xwidget)
-                (rename-buffer (format "*xwidget webkit: %s *" title))
-                (run-hooks 'xwidget-webkit-finished-loading-hook)))
-             (pop-to-buffer (current-buffer)))
-            ((eq xwidget-event-type 'decide-policy)
-             (let ((strarg  (nth 3 last-input-event)))
-               (if (string-match ".*#\\(.*\\)" strarg)
-                   (xwidget-webkit-show-id-or-named-element
-                    xwidget
-                    (match-string 1 strarg)))))
-            ((eq xwidget-event-type 'javascript-callback)
-             (let ((proc (nth 3 last-input-event))
-                   (arg  (nth 4 last-input-event)))
-               (funcall proc arg)))
-            (t (xwidget-log "unhandled event:%s" xwidget-event-type))))))
-
-(defun xwidget-webkit-new-session (url)
-  "Create a new webkit session buffer with URL."
-  (let*
-      ((bufname (generate-new-buffer-name "*xwidget-webkit*"))
-       xw)
-    (setq xwidget-webkit-last-session-buffer (switch-to-buffer
-                                              (get-buffer-create bufname)))
-    ;; The xwidget id is stored in a text property, so we need to have
-    ;; at least character in this buffer.
-    (insert " ")
-    ;; Set the initial size to 0 to avoid the white canvas. It will be correctly resized later by the xwidget-webkit-adjust-size-to-window in xwidget-webkit-callback.
-    (setq xw (xwidget-insert 1 'webkit bufname 0 0))
-    (xwidget-put xw 'callback 'xwidget-webkit-callback)
-    (xwidget-webkit-mode)
-    (xwidget-webkit-goto-uri (xwidget-webkit-last-session) url)))
-
-(defun xwidget-webkit-forward ()
-  "Go forward in history."
-  (interactive)
-  (xwidget-webkit-execute-script (xwidget-webkit-current-session)
-                                 "history.go(1);"))
-
-(defun xwidget-webkit-get-current-url (proc)
-  "Get the current webkit url and pass it to PROC."
-  (xwidget-webkit-execute-script
-   (xwidget-webkit-current-session)
-   "document.URL;"
-   proc))
-
-
-(defun xwidget-webkit-open-current-url-in-default-browser ()
-  "Open the webkit url in the default browser."
-  (interactive)
-  (xwidget-webkit-get-current-url (lambda (url) (browse-url-default-browser url))))
-
-
-(define-key xwidget-webkit-mode-map "u" 'xwidget-webkit-current-url)
-(define-key xwidget-webkit-mode-map "U"
-  'xwidget-webkit-open-current-url-in-default-browser)
-(define-key xwidget-webkit-mode-map [mouse-8] 'xwidget-webkit-back)
-(define-key xwidget-webkit-mode-map [mouse-9] 'xwidget-webkit-forward)
-
 (defun mu4e-headers-search-exclude-sms
     (&optional expr prompt edit ignore-history msgid show)
   "Wrapper around mu4e-headers-search to prepend 'NOT maildir:/SMS' to EXPR."
@@ -451,3 +358,198 @@ XWIDGET instance, XWIDGET-EVENT-TYPE depends on the originating xwidget."
 (define-key mu4e-headers-mode-map "s" 'mu4e-headers-search-exclude-sms)
 (define-key mu4e-main-mode-map "s" 'mu4e-headers-search-exclude-sms)
 (define-key mu4e-view-mode-map "s" 'mu4e-headers-search-exclude-sms)
+
+
+(setq mu4e-change-filenames-when-moving t)
+
+; https://github.com/djcb/mu/issues/1373
+(defun my/mu4e-check-draft-rename nil
+  "Check if the current file does not exist and if so, checks for another file
+that has the same filename up to a ':' or ','. If a file is found, changes the buffer
+filename to that file instead"
+  (let ((buf-path (buffer-file-name)))
+    (unless (file-exists-p buf-path)
+      (let ((buf-file (file-name-nondirectory buf-path))
+            (buf-dir (file-name-directory buf-path)))
+        (when-let ((_ (string-match "^[^\\,\\:]*" buf-file))
+                   (new-buf-name
+                    (car (file-expand-wildcards
+                          (concat buf-dir (match-string 0 buf-file) "*")))))
+          (unless (string= new-buf-name buf-path)
+            (let ((change-major-mode-with-file-name nil))
+            (set-visited-file-name new-buf-name))))))))
+
+(add-hook 'mu4e-compose-mode-hook
+    (lambda nil (add-hook 'before-save-hook #'my/mu4e-check-draft-rename  nil t)))
+
+;; https://emacs.stackexchange.com/questions/25012/how-can-i-copy-an-email-message-in-mu4e
+;; Function to interactively prompt for a destination (minimally changed from mu4e~mark-get-move-target() )
+(defun my~mark-get-copy-target ()
+  "Ask for a copy target, and propose to create it if it does not exist."
+   (interactive)
+   ;;  (mu4e-message-at-point) ;; raises error if there is none
+   (let* ((target (mu4e-ask-maildir "Copy message to: "))
+          (target (if (string= (substring target 0 1) "/")
+                      target
+                    (concat "/" target)))
+          (fulltarget (concat (mu4e-root-maildir) target)))
+     (when (or (file-directory-p fulltarget)
+               (and (yes-or-no-p
+                     (format "%s does not exist.  Create now?" fulltarget))
+                    (mu4e~proc-mkdir fulltarget)))
+       target)))
+
+;; Function to duplicate a message given by its docid, msg, and that will be copied to target when the mark is executed.
+(defun copy-message-to-target (docid msg target)
+  (let ((new_msg_path nil) ;; local variable
+        (msg_flags (mu4e-message-field msg :flags)))
+    ;; 1. target is already determined interactively when executing the mark
+    ;; (:ask-target)
+
+    ;; 2. Determine the path for the new file: we use
+    ;; mu4e~draft-message-filename-construct from mu4e-draft.el to create a new
+    ;; random filename, and append the original's msg_flags
+    (setq new_msg_path (format "%s%s/cur/%s"  ;; "%s/%s/cur/%s"
+                               (mu4e-root-maildir)
+                               target
+                               (mu4e~draft-message-filename-construct
+    (mu4e-flags-to-string msg_flags))))
+
+    ;; 3. Copy the message using file system call (copy-file) to new_msg_path:
+    ;; (See e.g. mu4e-draft.el > mu4e-draft-open > resend)
+    (copy-file (mu4e-message-field msg :path) new_msg_path)
+
+    ;; 4. Add the information to the database (may need to update current search
+    ;; query with 'g' if duplicating to current box. Try also 'V' to toggle the
+    ;; display of duplicates)
+    ;; (mu4e~proc-add new_msg_path (mu4e~mark-check-target target))
+    (mu4e~proc-add new_msg_path)
+    ))
+
+;; Set this up for marking: see
+;; https://www.djcbsoftware.nl/code/mu/mu4e/Adding-a-new-kind-of-mark.html
+(add-to-list 'mu4e-marks
+             '(copy
+               :char ("c" . "c")
+               :prompt "copy"
+               :ask-target  my~mark-get-copy-target
+               :action copy-message-to-target))
+
+(mu4e~headers-defun-mark-for copy)
+(define-key mu4e-headers-mode-map (kbd "c") 'mu4e-headers-mark-for-copy)
+
+(setq my-mu4e-query-lock (make-mutex "my-mu4e-query-lock"))
+(defvar *my-mu4e-query-cond-var* nil)
+(defvar *my-mu4e-query-in-progress* nil)
+(defvar *my-mu4e-query-result* nil)
+(setq mu4e-proc-filter-lock (make-mutex "mu4e-proc-filter-lock"))
+
+(defun with-mu4e-proc-filter-lock (orig-fun &rest args)
+  (with-mutex mu4e-proc-filter-lock
+    (apply orig-fun args)))
+
+(advice-add 'mu4e~proc-filter :around #'with-mu4e-proc-filter-lock)
+
+(defun my-mu4e-query (query)
+  (with-mutex mu4e-proc-filter-lock
+    (let ((*my-mu4e-query-cond-var*
+           (make-condition-variable my-mu4e-query-lock "my-mu4e-query-cond-var"))
+          (*my-mu4e-query-in-progress* t)
+          (*my-mu4e-query-result* nil)
+          (mu4e-header-func (lambda (msg) (push msg *my-mu4e-query-result*)))
+          (mu4e-found-func (lambda (count)
+                             (with-mutex my-mu4e-query-lock
+                               (setq *my-mu4e-query-in-progress* nil)
+                               ;; (condition-notify *my-mu4e-query-cond-var* t)
+                               )))
+          (mu4e-erase-func (lambda ())))
+      (mu4e~proc-find query nil :date 'descending nil nil nil)
+      (with-mutex my-mu4e-query-lock
+        (while *my-mu4e-query-in-progress*
+          ;; (condition-wait *my-mu4e-query-cond-var*)
+          (sleep-for 0.10)
+          ))
+      *my-mu4e-query-result*)))
+
+(defun mu4e-delete-message-from-all-maildirs (docid msg target)
+  (let* ((msgid (plist-get msg :message-id))
+         (msgs (my-mu4e-query (format "msgid:%s" msgid))))
+    (mu4e-message "Deleting %s distinct messages with msgid %s."
+                  (length msgs) msgid)
+    (dolist (found_msg msgs)
+      (mu4e~proc-move (plist-get found_msg :docid) (mu4e~mark-check-target target) "+T-N"))))
+
+
+(mu4e~headers-defun-mark-for very-trash)
+(add-to-list 'mu4e-marks
+             '(very-trash
+               :char ("v" . "v")
+               :prompt "vtrash"
+               :dyn-target (lambda (target msg) (mu4e-get-trash-folder msg))
+               :action mu4e-delete-message-from-all-maildirs))
+(define-key mu4e-headers-mode-map (kbd "v") 'mu4e-headers-mark-for-very-trash)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; webkit
+(require 'webkit)
+(global-set-key (kbd "C-x w") 'webkit)  ;; Bind to whatever global key binding you want if you want
+(require 'webkit-ace)  ;; If you want link hinting
+(require 'webkit-dark)  ;; If you want to use the simple dark mode
+
+(define-key webkit-mode-map (kbd "<next>") 'webkit-scroll-up)
+(define-key webkit-mode-map (kbd "<prior>") 'webkit-scroll-down)
+
+
+(defun mu4e-action-view-with-webkit (msg)
+  (webkit (concat "file://" (mu4e~write-body-to-html msg)) t))
+
+(add-to-list 'mu4e-view-actions
+             '("wViewWebkit" . mu4e-action-view-with-webkit) t)
+
+
+;; If you want history saved in a different place or
+;; Set to `nil' to if you don't want history saved to file (will stay in memory)
+(setq webkit-history-file nil)
+
+;; If you want cookies saved in a different place or
+;; Set to `nil' to if you don't want cookies saved
+(setq webkit-cookie-file nil)
+
+;; Set webkit as the default browse-url browser
+(setq browse-url-browser-function 'webkit-browse-url)
+
+;; Force webkit to always open a new session instead of reusing a current one
+(setq webkit-browse-url-force-new nil)
+
+;; ;; Globally disable javascript
+;; (add-hook 'webkit-new-hook #'webkit-enable-javascript)
+
+;; Globally use the simple dark mode
+(setq webkit-dark-mode t)
+
+;; ;; Fix blinkin by disabling emacs double buffering in themu4e frameg: https://github.com/akirakyle/emacs-webkit/issues/18
+;; (advice-add 'mu4e :before
+;;             (lambda (r)
+;;               (modify-frame-parameters nil '((inhibit-double-buffering . t)))))
+
+
+
+(load-file "~/.emacs.d/lisp/mu4e-views.el")
+(use-package mu4e-views
+  :after mu4e
+  :defer nil
+  :bind (:map mu4e-headers-mode-map
+              ("w" . mu4e-views-mu4e-select-view-msg-method) ;; select viewing method
+              ("M-n" . mu4e-views-cursor-msg-view-window-down) ;; from headers window scroll the email view
+              ("M-p" . mu4e-views-cursor-msg-view-window-up) ;; from headers window scroll the email view
+              ("f" . mu4e-views-toggle-auto-view-selected-message) ;; toggle opening messages automatically when moving in the headers view
+              )
+  :config
+  (setq mu4e-views-default-view-method "html")
+  (mu4e-views-mu4e-use-view-msg-method "html")
+  (setq mu4e-views-next-previous-message-behaviour 'always-switch-to-view) ;; when pressing n and p stay in the current window
+  (setq mu4e-views-auto-view-selected-message t)) ;; automatically open messages when moving in the headers view
+
+
+(setq mu4e-split-view 'vertical)

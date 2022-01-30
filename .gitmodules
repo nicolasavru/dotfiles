@@ -1,18 +1,18 @@
 [submodule "emacs.d/lisp/fixed-point-completion"]
-    path = emacs.d/lisp/fixed-point-completion
-    url = git://github.com/smithzvk/fixed-point-completion.git
+	path = emacs.d/lisp/fixed-point-completion
+	url = git://github.com/smithzvk/fixed-point-completion.git
 [submodule "emacs.d/lisp/e-sink"]
-    path = emacs.d/lisp/e-sink
-    url = git://github.com/lewang/e-sink.git
+	path = emacs.d/lisp/e-sink
+	url = git://github.com/lewang/e-sink.git
 [submodule "emacs.d/snippets/latex-mode/yasnippets-latex"]
-    path = emacs.d/snippets/latex-mode/yasnippets-latex
-    url = git://github.com/madsdk/yasnippets-latex.git
+	path = emacs.d/snippets/latex-mode/yasnippets-latex
+	url = git://github.com/madsdk/yasnippets-latex.git
 [submodule "emacs.d/ASynK"]
-    path = emacs.d/ASynK
-    url = git://github.com/skarra/ASynK.git
+	path = emacs.d/ASynK
+	url = git://github.com/skarra/ASynK.git
 [submodule "emacs.d/lisp/cedet"]
-  path = emacs.d/lisp/cedet
-  url = http://git.code.sf.net/p/cedet/git
+	path = emacs.d/lisp/cedet
+	url = http://git.code.sf.net/p/cedet/git
 [submodule "emacs.d/lisp/org-wiki"]
 	path = emacs.d/lisp/org-wiki
 	url = https://github.com/caiorss/org-wiki
@@ -25,18 +25,9 @@
 [submodule "emacs.d/lisp/tmtxt-async-tasks"]
 	path = emacs.d/lisp/tmtxt-async-tasks
 	url = https://github.com/tmtxt/tmtxt-async-tasks.git
-[submodule "emacs.d/javascript/chroma.js"]
-	path = emacs.d/javascript/chroma.js
-	url = https://github.com/gka/chroma.js.git
-[submodule "emacs.d/javascript/d3-hsv"]
-	path = emacs.d/javascript/d3-hsv
-	url = https://github.com/d3/d3-hsv.git
-[submodule "emacs.d/javascript/d3-cam16"]
-	path = emacs.d/javascript/d3-cam16
-	url = https://github.com/d3/d3-cam16.git
-[submodule "emacs.d/javascript/d3-cam02"]
-	path = emacs.d/javascript/d3-cam02
-	url = https://github.com/connorgr/d3-cam02.git
-[submodule "emacs.d/javascript/d3-color"]
-	path = emacs.d/javascript/d3-color
-	url = https://github.com/d3/d3-color.git
+[submodule "emacs.d/lisp/emacs-webkit"]
+	path = emacs.d/lisp/emacs-webkit
+	url = git@github.com:akirakyle/emacs-webkit.git
+[submodule "sway/swaymonad"]
+	path = sway/swaymonad
+	url = https://github.com/nicolasavru/swaymonad.git

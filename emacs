@@ -2,9 +2,10 @@
 ;; GC
 
 ;; https://github.com/hlissner/doom-emacs/issues/310
-(setq gc-cons-threshold 402653184
+(setq gc-cons-threshold (* 1024 1024 1024)
       gc-cons-percentage 0.6
       file-name-handler-alist nil)
+(run-with-idle-timer 2 t (lambda () (garbage-collect)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -48,7 +49,7 @@
 ;; (add-hook 'c++-mode-hook
 ;;           '(lambda ()
 ;;              ;; ac-omni-completion-sources is made buffer local so
-;;              ;; you need to add it to a mode hook to activate on 
+;;              ;; you need to add it to a mode hook to activate on
 ;;              ;; whatever buffer you want to use it with.  This
 ;;              ;; example uses C mode (as you probably surmised).
 
@@ -65,7 +66,7 @@
 ;;                           (cons "->" '(ac-source-semantic)))
 
 ;;              ;; ac-sources was also made buffer local in new versions of
-;;              ;; autocomplete.  In my case, I want AutoComplete to use 
+;;              ;; autocomplete.  In my case, I want AutoComplete to use
 ;;              ;; semantic and yasnippet (order matters, if reversed snippets
 ;;              ;; will appear before semantic tag completions).
 
@@ -105,23 +106,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; general settings
 
-;; (set-frame-font
-;;  "DejaVu Sans Mono:size=17:foundry=PfEd:weight=normal:slant=normal:width=normal:spacing=100:scalable=true:hinting=false")
-(set-frame-font
- "DejaVu Sans Mono:size=17:hinting=false")
+(set-face-font 'default "DejaVu Sans Mono:size=16:antialias=true:hinting=false:hintstyle=none:autohint=false:rgba=none")
 
-(setq message-log-max 1000)              ;; set Message buffer length to 1000 lines
+(add-to-list 'term-file-aliases '("foot" . "xterm"))
 
-(setq x-select-enable-clipboard t        ;; copy-paste should work ...
-  interprogram-paste-function            ;; ...with...
-  'x-cut-buffer-or-selection-value)      ;; ...other X clients
-
-(setq search-highlight t                 ;; highlight when searching...
-  query-replace-highlight t)             ;; ...and replacing
 (fset 'yes-or-no-p 'y-or-n-p)            ;; enable y/n answers to yes/no
 
-(setq completion-ignore-case t           ;; ignore case when completing...
-  read-file-name-completion-ignore-case t) ;; ...filenames too
+(setq completion-ignore-case t                 ;; ignore case when completing...
+      read-file-name-completion-ignore-case t) ;; ...filenames too
 
 (setq-default
  frame-title-format
@@ -198,6 +190,10 @@ line instead."
 (cua-mode t)
 
 (setq sentence-end-double-space nil)
+
+(setq confirm-kill-emacs 'yes-or-no-p)
+
+(setq search-upper-case t)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -343,7 +339,7 @@ line instead."
 
 (require 'whitespace)
 (setq whitespace-style
-        '(face tabs spaces newline space-mark tab-mark newline-mark indentation space-after-tab space-before-tab))
+        '(face tabs spaces newline space-mark tab-mark newline-mark indentation space-after-tab space-before-tab trailing))
 (global-whitespace-mode)
 
 (global-display-line-numbers-mode)
@@ -639,7 +635,8 @@ line instead."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; SLIME
 
-(load (expand-file-name "~/quicklisp/slime-helper.el"))
+;; TODO: broken with nativecomp
+;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
 (setq inferior-lisp-program "sbcl")
 (require 'slime)
 
@@ -924,73 +921,6 @@ line instead."
 (setq w3m-use-cookies t)
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; xwidget
-
-(require 'xwidget)
-
-;; make these keys behave like normal browser
-(define-key xwidget-webkit-mode-map [mouse-4] 'xwidget-webkit-scroll-down)
-(define-key xwidget-webkit-mode-map [mouse-5] 'xwidget-webkit-scroll-up)
-(define-key xwidget-webkit-mode-map (kbd "<up>") 'xwidget-webkit-scroll-down)
-(define-key xwidget-webkit-mode-map (kbd "<down>") 'xwidget-webkit-scroll-up)
-(define-key xwidget-webkit-mode-map (kbd "M-w") 'xwidget-webkit-copy-selection-as-kill)
-(define-key xwidget-webkit-mode-map (kbd "C-c") 'xwidget-webkit-copy-selection-as-kill)
-
-;; adapt webkit according to window configuration chagne automatically
-;; without this hook, every time you change your window configuration,
-;; you must press 'a' to adapt webkit content to new window size
-(add-hook 'window-configuration-change-hook (lambda ()
-               (when (equal major-mode 'xwidget-webkit-mode)
-                 (xwidget-webkit-adjust-size-dispatch))))
-
-;; by default, xwidget reuses previous xwidget window,
-;; thus overriding your current website, unless a prefix argument
-;; is supplied
-;;
-;; This function always opens a new website in a new window
-(defun xwidget-browse-url-no-reuse (url &optional sessoin)
-  (interactive (progn
-                 (require 'browse-url)
-                 (browse-url-interactive-arg "xwidget-webkit URL: "
-                                             )))
-  (xwidget-webkit-browse-url url t))
-
-;; make xwidget default browser
-(setq browse-url-browser-function (lambda (url session)
-                    (other-window 1)
-                    (xwidget-browse-url-no-reuse url)))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; jabber
-
-;; (require 'jabber-autoloads)
-
-(setq jabber-show-resources 'always)
-(setq jabber-autoaway-method 'jabber-xprintidle-get-idle-time)
-(add-hook 'jabber-chat-mode-hook 'flyspell-mode)
-(setq jabber-chat-time-format "%H:%M:%S")
-(setq jabber-chat-delayed-time-format "%Y-%m-%d %H:%M:%S")
-(setq jabber-default-status "There is beauty in complexity, but elegance in simplicity.")
-(setq jabber-auto-reconnect t)
-;; ;(setq jabber-alert-presence-hooks nil)
-;; (add-hook 'jabber-post-connect-hooks 'jabber-autoaway-start)
-
-(jabber-connect-all)
-;; (jabber-mode-line-mode)
-
-;; don't clobber my minibuffer!
-(define-jabber-alert echo "Show a message in the echo area"
-  (lambda (msg)
-    (unless (minibuffer-prompt)
-      (message "%s" msg))))
-
-(global-set-key (kbd "C-c j") (lambda ()
-                               (interactive)
-                               (switch-to-buffer "*-jabber-roster-*")))
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ocaml
 
@@ -1009,46 +939,6 @@ line instead."
 ;; JavaScript
 
 (setq js-indent-level 2)
-
-
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;; voice
-;; (require 'festival)
-;; (festival-start)
-;; (require 'festival-extension)
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; sauron
-
-(require 'sauron)
-(global-set-key (kbd "C-c s") 'sauron-toggle-hide-show)
-
-(setq sauron-dbus-cookie t)
-
-(setq
- sauron-max-line-length 120
- sauron-watch-patterns '("volhv")
- sauron-watch-nicks '("volhv"))
-
-(add-hook 'sauron-event-added-functions
-          (lambda (origin prio msg &optional props)
-            (if (string-match "ping" msg)
-                (sauron-fx-sox "/usr/share/sounds/trillian/generic-event.wav"))
-            (cond
-;             ((= prio 3) (sauron-fx-sox "/usr/share/sounds/trillian/message-inbound.wav"))
-             ((= prio 3) (sauron-fx-festival msg))
-             ((= prio 4) (sauron-fx-festival msg))
-;             ((= prio 4) (sauron-fx-sox "/usr/share/sounds/trillian/message-inbound.wav"))
-             ((= prio 5)
-              (sauron-fx-sox "/usr/share/sounds/trillian/generic-event.wav")
-              (sauron-fx-gnome-osd(format "%S: %s" origin msg) 5)))))
-
-;; (defun sauron-fx-festival (msg)
-;;   "Say MSG with festival."
-;;   (festival-say msg))
-
-(sauron-start)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1479,14 +1369,3 @@ expensive operation."
 ;; don't find this very useful, but it's frequently useful to only
 ;; look at interactive functions.
 (global-set-key (kbd "C-h C") #'helpful-command)
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; GC
-
-;; after startup, it is important you reset this to some reasonable default. A large 
-;; gc-cons-threshold will cause freezing and stuttering during long-term 
-;; interactive use. I find these are nice defaults:
-(add-hook 'emacs-startup-hook
-  (setq gc-cons-threshold 16777216
-        gc-cons-percentage 0.1))

@@ -196,6 +196,7 @@ HISTSIZE=1000000             # size of history
 NULLCMD='cat'                # use cat for > null commands
 SAVEHIST=655360              # maximum of history events to be save
 DIRSTACKSIZE=50
+setopt HIST_IGNORE_SPACE
 
 # misc
 # Choose word delimiter characters in line editor

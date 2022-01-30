@@ -14,9 +14,8 @@
 
 source /etc/profile
 
-export PATH=$HOME/bin:$HOME/scripts:$PATH
+export PATH=$HOME/dotfiles/bin:$HOME/bin:$HOME/scripts:$PATH
 export PATH=$HOME/.cargo/bin:$PATH
-export PATH=/opt/MATLAB/R2015b/bin:$PATH
 
 export BROWSER="firefox-nightly"
 export EDITOR="emacsclient_launcher.sh"
@@ -28,10 +27,20 @@ export LESSOPEN="|lesspipe.sh %s"
 export PAGER="less"
 
 export WINEDEBUG="-all"
-export pacman_program="yaourt"
+export pacman_program="pikaur"
 export VDPAU_DRIVER="va_gl"
 
 export LIBVIRT_DEFAULT_URI="qemu:///system"
+
+export JAVA_HOME=/usr/lib/jvm/default
+export PATH=$JAVA_HOME/bin:$PATH
+export _JAVA_AWT_WM_NONREPARENTING=1
+
+MOZ_ENABLE_WAYLAND=1
+
+export QT_SCALE_FACTOR=1.25
+export QT_QPA_PLATFORMTHEME="qt5ct"
+#export GDK_DPI_SCALE=1.25
 
 # Kill flow control
 if tty -s ; then

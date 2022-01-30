@@ -11,7 +11,11 @@
                          ;; ("SC"   . "http://joseito.republika.pl/sunrise-commander/")
                          ))
 
+(setq load-prefer-newer t)
 (package-initialize)
+(require 'auto-compile)
+(auto-compile-on-load-mode)
+(auto-compile-on-save-mode)
 
 (when (not package-archive-contents)
   (package-refresh-contents))
@@ -23,6 +27,7 @@
         apache-mode
         async
         auctex
+        auto-compile
         auto-complete-auctex
         auto-complete-c-headers
         auto-complete-chunk
@@ -90,6 +95,7 @@
         matrix-client
         mentor
         mu4e-maildirs-extension
+        ;mu4e-views
         nlinum
         oauth2
         offlineimap
@@ -149,7 +155,7 @@
 
 ;;(package-initialize)
 
-(require 'quelpa-use-package)
-(use-package matrix-client
-  :quelpa ((matrix-client :fetcher github :repo "alphapapa/matrix-client.el"
-                          :files (:defaults "logo.png" "matrix-client-standalone.el.sh"))))
+;(require 'quelpa-use-package)
+;(use-package matrix-client
+;  :quelpa ((matrix-client :fetcher github :repo "alphapapa/matrix-client.el"
+;                          :files (:defaults "logo.png" "matrix-client-standalone.el.sh"))))
