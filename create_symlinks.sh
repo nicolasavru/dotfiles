@@ -10,5 +10,6 @@ ln -sf ~/dotfiles/zsh.d ~/.zsh.d
 ln -sf ~/dotfiles/zshenv ~/.zshenv
 ln -sf ~/dotfiles/zshrc  ~/.zshrc
 
+ln -sf ~/dotfiles/sway ~/.config/sway
 
 ln -sf ~/dotfiles/bin ~/bin
