@@ -1,15 +1,15 @@
 [submodule "emacs.d/lisp/fixed-point-completion"]
 	path = emacs.d/lisp/fixed-point-completion
-	url = git://github.com/smithzvk/fixed-point-completion.git
+	url = https://github.com/smithzvk/fixed-point-completion.git
 [submodule "emacs.d/lisp/e-sink"]
 	path = emacs.d/lisp/e-sink
-	url = git://github.com/lewang/e-sink.git
+	url = https://github.com/lewang/e-sink.git
 [submodule "emacs.d/snippets/latex-mode/yasnippets-latex"]
 	path = emacs.d/snippets/latex-mode/yasnippets-latex
-	url = git://github.com/madsdk/yasnippets-latex.git
+	url = https://github.com/madsdk/yasnippets-latex.git
 [submodule "emacs.d/ASynK"]
 	path = emacs.d/ASynK
-	url = git://github.com/skarra/ASynK.git
+	url = https://github.com/skarra/ASynK.git
 [submodule "emacs.d/lisp/cedet"]
 	path = emacs.d/lisp/cedet
 	url = http://git.code.sf.net/p/cedet/git
