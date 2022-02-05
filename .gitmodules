@@ -27,7 +27,7 @@
 	url = https://github.com/tmtxt/tmtxt-async-tasks.git
 [submodule "emacs.d/lisp/emacs-webkit"]
 	path = emacs.d/lisp/emacs-webkit
-	url = git@github.com:akirakyle/emacs-webkit.git
+	url = https://github.com:akirakyle/emacs-webkit.git
 [submodule "sway/swaymonad"]
 	path = sway/swaymonad
 	url = https://github.com/nicolasavru/swaymonad.git
