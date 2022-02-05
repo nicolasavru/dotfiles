@@ -106,8 +106,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; general settings
 
-(set-face-font 'default "DejaVu Sans Mono:size=16:antialias=true:hinting=false:hintstyle=none:autohint=false:rgba=none")
-
 (add-to-list 'term-file-aliases '("foot" . "xterm"))
 
 (fset 'yes-or-no-p 'y-or-n-p)            ;; enable y/n answers to yes/no
@@ -678,7 +676,7 @@ line instead."
 (setq custom-theme-directory "~/.emacs.d/lisp/themes")
 (load-theme 'nicolasavru-dark t)
 
-(set-face-attribute 'default nil :height 100)
+(set-face-font 'default "DejaVu Sans Mono:size=16:antialias=true:hinting=false:hintstyle=none:autohint=false:rgba=none")
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

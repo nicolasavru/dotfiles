@@ -70,7 +70,7 @@
  '(highlight ((t (:background "#000040"))))
  '(region ((t (:background "#000060"))))
  '(secondary-selection ((t (:background "#000060"))))
- 
+
  '(underline ((((supports :underline t)) (:underline t :foreground "green" :inherit (default)))))
  '(bold ((t (:weight bold :inherit (default)))))
  '(bold-italic ((t (:weight bold :inherit (italic)))))

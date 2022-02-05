@@ -111,7 +111,7 @@ bindsym $mod+n split none
 #bindsym $mod+w layout tabbed
 #bindsym $mod+e layout toggle split
 
-bindsym $mod+f fullscreen
+bindsym $mod+f nop fullscreen
 bindsym $mod+Shift+space floating toggle
 bindsym $mod+space focus mode_toggle
 
