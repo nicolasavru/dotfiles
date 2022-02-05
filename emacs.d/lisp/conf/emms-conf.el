@@ -3,23 +3,11 @@
 
 ;http://www.gnu.org/software/emms/configs/lb-emms.el
 
-
 (require 'emms-setup)
 (emms-devel)
-;(emms-standard)
-;(require 'emms-player-mpd)
-;(setq emms-player-mpd-server-name "localhost")
-;(setq emms-player-mpd-server-port "6600")
-;(emms-player-mpd-connect)
+
 (require 'emms-streams)
 (setq emms-stream-bookmarks-file "~/.emacs.d/emms/emms-streams")
-
-;; (setq emms-lastfm-client-session-key-file "~/.emacs.d/emms/emms-lastfm-client-sessionkey")
-;; (require 'emms-lastfm-client)
-
-;; ;(emms-lastfm-client)
-;; ;(emms-lastfm-scrobbler-enable)
-;; (emms-lastfm-scrobbler-disable)
 
 (setq emms-playlist-default-major-mode 'emms-playlist-mode)
 (emms-cache-disable)
@@ -39,21 +27,12 @@
                 ".it" ".imf" ".mod" ".med" ".mtm" ".okt" ".s3m"
                 ".stm" ".stx" ".ult" ".apun" ".xm" ".mod" ".MOD")
               ) "mikmod" "-q" "-p" "1" "-X")
-;(add-to-list 'emms-player-list 'emms-player-mpd)
-;; (require 'emms-player-mplayer)
-(require 'emms-player-mpv)
-;(add-to-list 'emms-player-list 'emms-player-mplayer)
-;(emms-default-players)
-;(setq emms-player-list '(emms-player-mplayer-playlist emms-player-mplayer emms-player-vlc))
-;; (setq emms-player-list '(emms-player-mplayer emms-player-vlc))
-(setq emms-player-list '(emms-player-mpv emms-player-vlc))
-;; (add-to-list 'emms-player-mplayer-parameters "-novideo")
-(add-to-list 'emms-player-mpv-parameters "--no-video")
-;; (setq emms-player-list '(emms-player-vlc))
-;(setq emms-player-list '(emms-player-mpg321 emms-player-ogg123 emms-player-mplayer))
-(add-to-list 'emms-player-list 'emms-player-mikmod)
 
-;(setq emms-player-list '(emms-player-vlc))
+(require 'emms-player-mpv)
+
+(setq emms-player-list '(emms-player-mpv emms-player-vlc))
+(add-to-list 'emms-player-mpv-parameters "--no-video")
+(add-to-list 'emms-player-list 'emms-player-mikmod)
 
 ;; Libtag support
 (require 'emms-info-libtag)
@@ -78,22 +57,6 @@
 (emms-mode-line 0)
 (emms-playing-time 1)
 
-;;; Add music file to playlist on '!', --lgfang
-;; (setq dired-guess-shell-alist-user
-;;       (list
-;;        (list "\\.\\(flac\\|mp3\\|ogg\\|wav\\)\\'"
-;;              '(if (y-or-n-p "Add to emms playlist?")
-;;                   (progn (emms-add-file (dired-get-filename))
-;;                          (keyboard-quit))
-;;                 "mplayer"))))
-
-;; (setq dired-guess-shell-alist-user
-;;       (list
-;;        (list "\.(flac|mp3|ogg|wav)$"
-;;              '(if (y-or-n-p "Add to emms playlist?")
-;;                   (progn (emms-add-file (dired-get-filename))
-;;                          (keyboard-quit))
-;;                 "mplayer"))))
 
 (global-set-key (kbd "<f1>")    'emms-add-directory-tree)
 (global-set-key (kbd "C-<f1>")    'emms-play-directory-tree)
@@ -104,14 +67,5 @@
 (global-set-key (kbd "C-c <up>") 'emms-start)
 (global-set-key (kbd "C-c <down>") 'emms-stop)
 (global-set-key (kbd "C-c SPC") 'emms-pause)
-(global-set-key (kbd "<f14>") 'emms-next)
-(global-set-key (kbd "<f13>") 'emms-previous)
-(global-set-key (kbd "<f15>") 'emms-get-lyrics-current-song)
-(global-set-key (kbd "C-<f15>") 'emms-get-lyrics-custom)
-(global-set-key (kbd "C-<XF86AudioRaiseVolume>") 'emms-volume-raise)
-(global-set-key (kbd "C-<XF86AudioLowerVolume>") 'emms-volume-lower)
 
 (define-key dired-mode-map (kbd "M-<f1>") 'emms-add-dired)
-
-(require 'emms-get-lyrics)
-(setq emms-get-lyrics-use-files nil)
