@@ -1,0 +1,103 @@
+/*
+Reference:
+https://docs.gtk.org/gtk3/css-overview.html
+https://docs.gtk.org/gtk3/css-properties.html
+https://github.com/Alexays/Waybar/wiki/Styling#interactive-styling
+*/
+
+* {
+  font-family: "DejaVu Sans Mono";
+  font-size: 16px;
+  color: #ffffff;
+  border-radius: 0px;
+}
+
+#waybar {
+  background-color: #222222;
+  border-bottom: 4px solid #005b5d;
+}
+
+tooltip {
+  background-color: #005b5d;
+}
+
+#workspaces button {
+  padding: 0px 4px 0px 4px;
+}
+
+#workspaces button:hover {
+  -gtk-icon-effect: none;
+  background-image: none;
+  border-image-source: none;
+}
+
+#workspaces button.visible {
+  background-color: #005b5d;
+  border: 1px solid #005b5d;
+}
+
+#workspaces button.urgent {
+  background-color: #900000;
+  border: 1px solid #2f343a;
+}
+
+#mode {
+   background-color: #900000;
+   padding: 0px 5px 0px 5px;
+   border: 1px solid #2f343a;
+}
+
+#custom-scratchpad {
+  padding: 0px 4px 0px 4px;
+}
+
+.scratchpad-populated {
+  border: 2px solid #005b5d;
+}
+
+#window {
+   padding: 0px 10px 0px 10px;
+}
+
+#cpu, #temperature, #memory {
+  border-bottom: 4px solid #006b00;
+  padding: 0px 4px 0px 4px;
+}
+
+#temperature.critical {
+   color: #ff3333;
+}
+
+#custom-uptext {
+  border-bottom: 4px solid #f50000;
+  padding: 0px 4px 0px 0px;
+}
+
+#custom-downtext {
+  border-bottom: 4px solid #f50000;
+  padding: 0px 0px 0px 4px;
+}
+
+#network {
+  border-bottom: 4px solid #f50000;
+  padding: 0px 2px 0px 2px;
+}
+
+#network.disconnected {
+  color: #ff3333;
+}
+
+#pulseaudio {
+  border-bottom: 4px solid #8000ff;
+  padding: 0px 4px 0px 4px;
+}
+
+#clock {
+  border-bottom: 4px solid #007dff;
+  padding: 0px 4px 0px 4px;
+}
+
+#tray {
+  border-bottom: 4px solid #8b3c00;
+  padding: 0px 4px 0px 4px;
+}

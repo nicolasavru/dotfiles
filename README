@@ -1,5 +1,3 @@
-Dotfiles of Nicolas Avrutin (nicolasavru@gmail.com)
-
 Upon cloning, run:
 dotfiles/create_symlinks.sh
 git submodule init
