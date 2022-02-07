@@ -12,6 +12,7 @@ ln -sf ~/dotfiles/zshrc  ~/.zshrc
 
 ln -sfn ~/dotfiles/sway ~/.config/sway
 ln -sfn ~/dotfiles/foot ~/.config/foot
+ln -sfn ~/dotfiles/waybar ~/.config/waybar
 
 ln -sfn ~/dotfiles/fontconfig ~/.config/fontconfig
 
